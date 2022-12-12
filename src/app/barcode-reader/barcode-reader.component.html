@@ -1,2 +1,11 @@
 <p>barcode-reader works!</p>
-<zxing-scanner class="barcode" (camerasFound)="handleCamerasFound($event)" (scanSuccess)="handleSuccess($event)"></zxing-scanner>
+<zxing-scanner class="barcode"
+               (camerasFound)="handleCamerasFound($event)"
+               (scanSuccess)="handleSuccess($event)"
+               [(device)]="currentMediaDevice"
+></zxing-scanner>
+<select [formControl]="cameraFormControl">
+  <option *ngFor="let media of mediaDevices">
+    {{ media.label }}
+  </option>
+</select>
