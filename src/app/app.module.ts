@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { BarcodeReaderComponent } from './barcode-reader/barcode-reader.component';
+import {ZXingScannerModule} from "@zxing/ngx-scanner";
 
 @NgModule({
   declarations: [
@@ -10,7 +11,8 @@ import { BarcodeReaderComponent } from './barcode-reader/barcode-reader.componen
     BarcodeReaderComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    ZXingScannerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

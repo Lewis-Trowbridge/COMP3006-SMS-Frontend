@@ -7,4 +7,13 @@ import { Component } from '@angular/core';
 })
 export class BarcodeReaderComponent {
 
+  mediaDevices: MediaDeviceInfo[] = []
+
+  handleCamerasFound(mediaDeviceInfo: MediaDeviceInfo[]) {
+    this.mediaDevices = mediaDeviceInfo
+  }
+
+  handleSuccess(value: string) {
+    console.log(value)
+  }
 }
