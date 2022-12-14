@@ -10,7 +10,7 @@ export class BarcodeReaderComponent {
   mediaDevices: MediaDeviceInfo[] = []
   currentMediaDevice: MediaDeviceInfo | undefined
   cameraFormControl = new FormControl()
-  code: string = ""
+  code = ''
 
   constructor () {
     this.cameraFormControl.valueChanges.subscribe(value => {

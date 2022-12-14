@@ -80,7 +80,6 @@ describe('BarcodeReaderComponent', () => {
     expect(mockDeviceSet).toHaveBeenCalledTimes(2)
     expect(mockDeviceSet).toHaveBeenNthCalledWith(1, undefined)
     expect(mockDeviceSet).toHaveBeenNthCalledWith(2, mockDevice1)
-    
   })
 
   it('shoud set the code when a code is sucessfully scanned', async () => {
@@ -98,6 +97,5 @@ describe('BarcodeReaderComponent', () => {
     testEmitter.emit(expected)
 
     expect(fixture.componentInstance.code).toBe(expected)
-    
   })
 })
