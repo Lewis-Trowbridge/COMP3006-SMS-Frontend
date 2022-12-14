@@ -19,9 +19,14 @@ describe('BarcodeReaderComponent', () => {
     const mockDevice1 = mock<MediaDeviceInfo>({
       label: mockDevice1Name
     })
+    const mockDevice2Name = 'mockDevice2'
+    const mockDevice2 = mock<MediaDeviceInfo>({
+      label: mockDevice2Name
+    })
 
     const expected = [
-      mockDevice1
+      mockDevice1,
+      mockDevice2
     ]
     const moduleMetadata = MockBuilder(BarcodeReaderComponent, AppModule)
       .mock(ZXingScannerModule)
@@ -34,5 +39,6 @@ describe('BarcodeReaderComponent', () => {
     testEmitter.emit(expected)
 
     expect(await findByText(mockDevice1Name)).toBeInTheDocument()
+    expect(await findByText(mockDevice2Name)).toBeInTheDocument()
   })
 })
