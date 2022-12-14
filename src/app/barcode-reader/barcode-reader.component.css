@@ -1,0 +1,6 @@
+.barcode {
+  width: 200px;
+  border-width: 0.5rem;
+  border-color: black;
+  border-style: solid;
+}
