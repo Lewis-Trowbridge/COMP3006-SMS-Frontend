@@ -5,7 +5,9 @@
                [(device)]="currentMediaDevice"
 ></zxing-scanner>
 <select [formControl]="cameraFormControl">
-  <option *ngFor="let media of mediaDevices">
-    {{ media.label }}
-  </option>
+  <ng-container *ngFor="let media of mediaDevices">
+    <option [value]="media.label">
+      {{ media.label }}
+    </option>
+  </ng-container>
 </select>
