@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
 import { FormControl } from '@angular/forms'
 
 @Component({
@@ -7,22 +7,21 @@ import { FormControl } from '@angular/forms'
   styleUrls: ['./barcode-reader.component.css']
 })
 export class BarcodeReaderComponent {
-
   mediaDevices: MediaDeviceInfo[] = []
   currentMediaDevice: MediaDeviceInfo | undefined
   cameraFormControl = new FormControl()
 
-  constructor() {
+  constructor () {
     this.cameraFormControl.valueChanges.subscribe(value => {
-      this.currentMediaDevice = this.mediaDevices.find(device => device.label == value)
+      this.currentMediaDevice = this.mediaDevices.find(device => device.label === value)
     })
   }
 
-  handleCamerasFound(mediaDeviceInfo: MediaDeviceInfo[]) {
+  handleCamerasFound (mediaDeviceInfo: MediaDeviceInfo[]): void {
     this.mediaDevices = mediaDeviceInfo
   }
 
-  handleSuccess(value: string) {
+  handleSuccess (value: string): void {
     console.log(value)
   }
 }

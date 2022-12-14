@@ -1,18 +1,17 @@
-import { BarcodeReaderComponent } from './barcode-reader.component';
-import {render} from "@testing-library/angular";
-import {ZXingScannerComponent, ZXingScannerModule} from "@zxing/ngx-scanner";
-import {MockBuilder, MockInstance} from "ng-mocks";
-import {EventEmitter} from "@angular/core";
-import {mock} from "jest-mock-extended";
-import {AppModule} from "../app.module";
-import {ReactiveFormsModule} from "@angular/forms";
+import { BarcodeReaderComponent } from './barcode-reader.component'
+import { render } from '@testing-library/angular'
+import { ZXingScannerComponent, ZXingScannerModule } from '@zxing/ngx-scanner'
+import { MockBuilder, MockInstance } from 'ng-mocks'
+import { EventEmitter } from '@angular/core'
+import { mock } from 'jest-mock-extended'
+import { AppModule } from '../app.module'
+import { ReactiveFormsModule } from '@angular/forms'
 
 describe('BarcodeReaderComponent', () => {
-
   it('should create', async () => {
     const { queryByText } = await render(BarcodeReaderComponent, { imports: [ZXingScannerModule] })
-    expect(queryByText("barcode-reader works!")).toBeInTheDocument()
-  });
+    expect(queryByText('barcode-reader works!')).toBeInTheDocument()
+  })
 
   it('should display all available video inputs', async () => {
     const testEmitter = new EventEmitter<MediaDeviceInfo[]>()
@@ -22,7 +21,7 @@ describe('BarcodeReaderComponent', () => {
     })
 
     const expected = [
-      mockDevice1,
+      mockDevice1
     ]
     const moduleMetadata = MockBuilder(BarcodeReaderComponent, AppModule)
       .mock(ZXingScannerModule)
@@ -36,4 +35,4 @@ describe('BarcodeReaderComponent', () => {
 
     expect(await findByText(mockDevice1Name)).toBeInTheDocument()
   })
-});
+})

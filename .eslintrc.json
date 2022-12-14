@@ -8,11 +8,15 @@
       "files": [
         "*.ts"
       ],
+      "parserOptions": {
+        "project": ["tsconfig.(app|spec).json"]
+      },
       "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@angular-eslint/recommended",
-        "plugin:@angular-eslint/template/process-inline-templates"
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "standard-with-typescript"
       ],
       "rules": {
         "@angular-eslint/directive-selector": [
