@@ -82,4 +82,22 @@ describe('BarcodeReaderComponent', () => {
     expect(mockDeviceSet).toHaveBeenNthCalledWith(2, mockDevice1)
     
   })
+
+  it('shoud set the code when a code is sucessfully scanned', async () => {
+    const testEmitter = new EventEmitter<string>()
+
+    const expected = 'code'
+    const moduleMetadata = MockBuilder(BarcodeReaderComponent, AppModule)
+      .mock(ZXingScannerModule)
+      .keep(ReactiveFormsModule)
+      .build()
+    MockInstance(ZXingScannerComponent, 'scanSuccess', testEmitter)
+
+    const { fixture } = await render(BarcodeReaderComponent, moduleMetadata)
+
+    testEmitter.emit(expected)
+
+    expect(fixture.componentInstance.code).toBe(expected)
+    
+  })
 })
