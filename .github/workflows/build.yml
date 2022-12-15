@@ -1,0 +1,28 @@
+name: Build and deploy
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to Google Cloud
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCLOUD_CREDENTIALS }}
+      - name: Use Node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: yarn install
+      - name: Build
+        run: yarn build
+      - name: Upload artifact
+        uses: google-github-actions/upload-cloud-storage@v0
+        with:
+          path: dist
+          destination: comp3000-frontend
+          parent: false
