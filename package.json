@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --base-href=/comp3006-frontend/",
+    "build": "ng build --base-href /comp3006-frontend/",
     "watch": "ng build --watch --configuration development",
     "test": "jest",
     "lint": "ng lint"
