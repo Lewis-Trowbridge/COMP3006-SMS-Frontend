@@ -24,5 +24,5 @@ jobs:
         uses: google-github-actions/upload-cloud-storage@v0
         with:
           path: dist
-          destination: comp3000-frontend
+          destination: comp3006-frontend
           parent: false
