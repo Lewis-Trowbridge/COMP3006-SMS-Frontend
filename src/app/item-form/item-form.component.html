@@ -1,12 +1,20 @@
 <p>item-form works!</p>
 <form [formGroup]="itemGroup" (ngSubmit)="onSubmit()">
-  <label for="name">Name:</label>
-  <input id="name" type="text" formControlName="name">
-  <label for="barcode">Barcode:</label>
-  <input id="barcode" type="text" formControlName="barcode">
-  <label for="position">Position:</label>
-  <input id="position" type="text" formControlName="position">
-  <label for="stock">Stock:</label>
-  <input id="stock" type="number" formControlName="stock">
-  <button type="submit">Create</button>
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput id="name" type="text" formControlName="name">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Barcode</mat-label>
+    <input matInput id="barcode" type="text" formControlName="barcode">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Position</mat-label>
+    <input matInput id="position" type="text" formControlName="position">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Stock</mat-label>
+    <input matInput id="stock" type="number" formControlName="stock">
+  </mat-form-field>
+  <button mat-raised-button color="primary" type="submit">Create</button>
 </form>

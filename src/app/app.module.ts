@@ -4,8 +4,12 @@ import { BrowserModule } from '@angular/platform-browser'
 import { AppComponent } from './app.component'
 import { BarcodeReaderComponent } from './barcode-reader/barcode-reader.component'
 import { ZXingScannerModule } from '@zxing/ngx-scanner'
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms'
 import { ItemFormComponent } from './item-form/item-form.component'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatInputModule } from '@angular/material/input'
+import { MatButtonModule } from '@angular/material/button'
 
 @NgModule({
   declarations: [
@@ -16,7 +20,11 @@ import { ItemFormComponent } from './item-form/item-form.component'
   imports: [
     BrowserModule,
     ZXingScannerModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]
