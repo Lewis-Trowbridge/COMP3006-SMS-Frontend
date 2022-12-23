@@ -1,0 +1,8 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "./dist/comp3006-sms-frontend",
+      "isSinglePageApplication": true
+    }
+  }
+}

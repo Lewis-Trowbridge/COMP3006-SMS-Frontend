@@ -30,3 +30,22 @@ jobs:
         run: yarn install
       - name: Lint
         run: yarn lint
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Use Node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: yarn install
+      - name: Build for testing
+        run: yarn build:lighthouse
+      - name: Run lighthouse
+        uses: treosh/lighthouse-ci-action@v9
+        with:
+          configPath: './lighthouserc.json'
+          uploadArtifacts: true

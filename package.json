@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --base-href /comp3006-frontend/",
+    "build:lighthouse": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "jest",
     "lint": "ng lint"
