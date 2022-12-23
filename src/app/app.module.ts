@@ -4,12 +4,14 @@ import { BrowserModule } from '@angular/platform-browser'
 import { AppComponent } from './app.component'
 import { BarcodeReaderComponent } from './barcode-reader/barcode-reader.component'
 import { ZXingScannerModule } from '@zxing/ngx-scanner'
-import { ReactiveFormsModule } from '@angular/forms'
+import { ReactiveFormsModule } from '@angular/forms';
+import { ItemFormComponent } from './item-form/item-form.component'
 
 @NgModule({
   declarations: [
     AppComponent,
-    BarcodeReaderComponent
+    BarcodeReaderComponent,
+    ItemFormComponent
   ],
   imports: [
     BrowserModule,
