@@ -43,7 +43,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Build for testing
-        run: yarn build
+        run: yarn build:lighthouse
       - name: Run lighthouse
         uses: treosh/lighthouse-ci-action@v9
         with:
