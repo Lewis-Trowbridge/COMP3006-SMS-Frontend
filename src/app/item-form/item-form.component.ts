@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { Component } from '@angular/core'
+import { FormControl, FormGroup } from '@angular/forms'
 
 @Component({
   selector: 'app-item-form',
@@ -13,4 +13,8 @@ export class ItemFormComponent {
     position: new FormControl(),
     stock: new FormControl()
   })
+
+  onSubmit (): void {
+    console.log(this.itemGroup.value)
+  }
 }

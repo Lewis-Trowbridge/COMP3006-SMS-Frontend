@@ -1,11 +1,12 @@
 <p>item-form works!</p>
-<form [formGroup]="itemGroup">
-    <label for="name">Name:</label>
-    <input id="name" type="text" formControlName="name">
-    <label for="barcode">Barcode:</label>
-    <input id="barcode" type="text" formControlName="barcode">
-    <label for="position">Position</label>
-    <input id="position" type="text" formControlName="position">
-    <label for="stock">Name:</label>
-    <input id="stock" type="number" formControlName="stock">
+<form [formGroup]="itemGroup" (ngSubmit)="onSubmit()">
+  <label for="name">Name:</label>
+  <input id="name" type="text" formControlName="name">
+  <label for="barcode">Barcode:</label>
+  <input id="barcode" type="text" formControlName="barcode">
+  <label for="position">Position:</label>
+  <input id="position" type="text" formControlName="position">
+  <label for="stock">Stock:</label>
+  <input id="stock" type="number" formControlName="stock">
+  <button type="submit">Create</button>
 </form>
