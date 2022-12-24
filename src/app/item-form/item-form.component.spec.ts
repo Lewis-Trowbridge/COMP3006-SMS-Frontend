@@ -1,5 +1,5 @@
 import { render } from '@testing-library/angular'
-import { MockBuilder } from 'ng-mocks'
+import { MockBuilder, MockInstance } from 'ng-mocks'
 import { ItemFormComponent } from './item-form.component'
 import { AppModule } from '../app.module'
 import { ReactiveFormsModule } from '@angular/forms'
@@ -8,6 +8,8 @@ import { MatInputModule } from '@angular/material/input'
 import { MatButtonModule } from '@angular/material/button'
 import { MatGridListModule } from '@angular/material/grid-list'
 import userEvent from '@testing-library/user-event'
+import { IItem, ItemServiceService } from '../item-service.service'
+import { Observable } from 'rxjs'
 
 describe('ItemFormComponent', () => {
   const user = userEvent.setup()
@@ -34,5 +36,26 @@ describe('ItemFormComponent', () => {
     const errorElement = await findByText(errorMessage)
     expect(errorElement).toHaveTextContent(errorMessage)
     expect(errorElement).toHaveClass('mat-mdc-form-field-error')
+  })
+
+  it('does not send a request if the form is invalid', async () => {
+    const user = userEvent.setup()
+    const moduleMetadata = MockBuilder(ItemFormComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatFormFieldModule)
+      .keep(MatInputModule)
+      .keep(MatButtonModule)
+      .keep(MatButtonModule)
+      .keep(MatGridListModule)
+      .build()
+
+    const mockCreate = jest.fn().mockReturnValue(new Observable<IItem>())
+    MockInstance(ItemServiceService, 'create', mockCreate)
+
+    const { findByRole } = await render(ItemFormComponent, moduleMetadata)
+    const submitButton = await findByRole('button')
+    await user.click(submitButton)
+
+    expect(mockCreate).not.toHaveBeenCalled()
   })
 })

@@ -20,10 +20,12 @@ export class ItemFormComponent {
   constructor (private readonly itemService: ItemServiceService) { }
 
   onSubmit (): void {
-    const result = this.itemService.create(this.itemGroup.value as IItem)
-    this.isLoading = true
-    result.subscribe(() => {
-      this.isLoading = false
-    })
+    if (this.itemGroup.valid) {
+      const result = this.itemService.create(this.itemGroup.value as IItem)
+      this.isLoading = true
+      result.subscribe(() => {
+        this.isLoading = false
+      })
+    }
   }
 }
