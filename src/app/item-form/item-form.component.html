@@ -1,32 +1,42 @@
 <p>item-form works!</p>
 <form [formGroup]="itemGroup" (ngSubmit)="onSubmit()">
-  <mat-grid-list cols="1" rowHeight="4rem">
+  <mat-grid-list cols="1" rowHeight="5rem">
     <mat-grid-tile>
-      <mat-form-field appearance="fill">
-        <mat-label>Name</mat-label>
-        <input matInput id="name" type="text" formControlName="name">
+      <mat-form-field>
+      <mat-label>Name</mat-label>
+        <input matInput id="name" type="text" formControlName="name" tabindex="0">
+        <mat-error *ngIf="itemGroup.controls.name.hasError('required')">Name is required.</mat-error>
       </mat-form-field>
     </mat-grid-tile>
     <mat-grid-tile>
       <mat-form-field>
-        <mat-label>Barcode</mat-label>
-        <input matInput id="barcode" type="text" formControlName="barcode">
+      <mat-label>Barcode</mat-label>
+        <input matInput id="barcode" type="text" formControlName="barcode" tabindex="0">
+        <mat-error *ngIf="itemGroup.controls.barcode.hasError('required')">Barcode is required.</mat-error>
       </mat-form-field>
     </mat-grid-tile>
     <mat-grid-tile>
       <mat-form-field>
         <mat-label>Position</mat-label>
-        <input matInput id="position" type="text" formControlName="position">
+        <input matInput id="position" type="text" formControlName="position" tabindex="0">
+        <mat-error *ngIf="itemGroup.controls.position.hasError('required')">Position is required.</mat-error>
       </mat-form-field>
     </mat-grid-tile>
     <mat-grid-tile>
       <mat-form-field>
-        <mat-label>Stock</mat-label>
-        <input matInput id="stock" type="number" formControlName="stock">
+      <mat-label>Stock</mat-label>
+        <input matInput id="stock" type="number" formControlName="stock" tabindex="0">
+        <mat-error *ngIf="itemGroup.controls.stock.hasError('required')">Stock is required.</mat-error>
+        <mat-error *ngIf="itemGroup.controls.stock.hasError('min')">Stock cannot be below 0.</mat-error>
       </mat-form-field>
     </mat-grid-tile>
     <mat-grid-tile>
-      <button mat-raised-button color="primary" type="submit">Create</button>
+      <button mat-raised-button color="primary" type="submit" tabindex="0">
+        <p *ngIf="!isLoading; else loadingSpinner">Create</p>
+        <ng-template #loadingSpinner>
+          <mat-spinner color="accent"></mat-spinner>
+        </ng-template>
+      </button>
     </mat-grid-tile>
   </mat-grid-list>
 </form>
