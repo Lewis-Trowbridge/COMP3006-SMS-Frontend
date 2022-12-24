@@ -53,9 +53,69 @@ describe('ItemFormComponent', () => {
     MockInstance(ItemServiceService, 'create', mockCreate)
 
     const { findByRole } = await render(ItemFormComponent, moduleMetadata)
-    const submitButton = await findByRole('button')
+    const submitButton = await findByRole('button', { name: 'Create' })
     await user.click(submitButton)
 
     expect(mockCreate).not.toHaveBeenCalled()
+  })
+
+  it('calls the create method when all valid fields are filled', async () => {
+    const user = userEvent.setup()
+    const moduleMetadata = MockBuilder(ItemFormComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatFormFieldModule)
+      .keep(MatInputModule)
+      .keep(MatButtonModule)
+      .keep(MatButtonModule)
+      .keep(MatGridListModule)
+      .build()
+    const item: IItem = {
+      name: 'name',
+      barcode: 'barcode',
+      position: 'position',
+      stock: 1
+    }
+    let sendData = false
+    const mockCreate = jest.fn().mockReturnValue(new Observable<IItem>((observer) => {
+      // eslint-disable-next-line no-unmodified-loop-condition
+      while (!sendData) { console.log(sendData)/* wait until switch flipped to send value */ }
+
+      observer.next(item)
+    }))
+    MockInstance(ItemServiceService, 'create', mockCreate)
+
+    const { findByRole, detectChanges } = await render(ItemFormComponent, moduleMetadata)
+
+    const nameInput = await findByRole('textbox', { name: 'Name' }) as HTMLInputElement
+    await user.click(nameInput)
+    await user.keyboard(item.name)
+
+    const barcodeInput = await findByRole('textbox', { name: 'Barcode' }) as HTMLInputElement
+    await user.click(barcodeInput)
+    await user.keyboard(item.barcode)
+
+    const positionInput = await findByRole('textbox', { name: 'Position' }) as HTMLInputElement
+    await user.click(positionInput)
+    await user.keyboard(item.position)
+
+    const stockInput = await findByRole('spinbutton', { name: 'Stock' }) as HTMLInputElement
+    await user.click(stockInput)
+    await user.keyboard(item.stock.toString())
+
+    const submitButton = await findByRole('button', { name: 'Create' })
+    expect(submitButton).toHaveTextContent('Create')
+    await user.click(submitButton)
+    const spinner = await findByRole('progressbar')
+
+    expect(submitButton).not.toHaveTextContent('Create')
+    expect(submitButton).toContainElement(spinner)
+
+    sendData = true
+    detectChanges()
+    expect(spinner).not.toBeInTheDocument()
+    expect(submitButton).toHaveTextContent('Create')
+
+    expect(mockCreate).toHaveBeenCalledTimes(1)
+    expect(mockCreate).toHaveBeenNthCalledWith(1, item)
   })
 })
