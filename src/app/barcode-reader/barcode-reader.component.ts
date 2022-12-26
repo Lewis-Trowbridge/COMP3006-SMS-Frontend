@@ -1,5 +1,6 @@
 import { Component } from '@angular/core'
 import { FormControl } from '@angular/forms'
+import { MatDialogRef } from '@angular/material/dialog'
 
 @Component({
   selector: 'app-barcode-reader',
@@ -10,9 +11,8 @@ export class BarcodeReaderComponent {
   mediaDevices: MediaDeviceInfo[] = []
   currentMediaDevice: MediaDeviceInfo | undefined
   cameraFormControl = new FormControl()
-  code = ''
 
-  constructor () {
+  constructor (public dialogRef: MatDialogRef<BarcodeReaderComponent>) {
     this.cameraFormControl.valueChanges.subscribe(value => {
       this.currentMediaDevice = this.mediaDevices.find(device => device.label === value)
     })
@@ -23,6 +23,6 @@ export class BarcodeReaderComponent {
   }
 
   handleSuccess (value: string): void {
-    this.code = value
+    this.dialogRef.close(value)
   }
 }

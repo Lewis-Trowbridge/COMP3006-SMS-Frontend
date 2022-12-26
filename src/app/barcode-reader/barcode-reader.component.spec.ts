@@ -7,13 +7,9 @@ import { mock } from 'jest-mock-extended'
 import { AppModule } from '../app.module'
 import { ReactiveFormsModule } from '@angular/forms'
 import userEvent from '@testing-library/user-event'
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog'
 
 describe('BarcodeReaderComponent', () => {
-  it('should create', async () => {
-    const { queryByText } = await render(BarcodeReaderComponent, { imports: [ZXingScannerModule] })
-    expect(queryByText('barcode-reader works!')).toBeInTheDocument()
-  })
-
   it('should display all available video inputs', async () => {
     const testEmitter = new EventEmitter<MediaDeviceInfo[]>()
     const mockDevice1Name = 'mockDevice1'
@@ -31,6 +27,8 @@ describe('BarcodeReaderComponent', () => {
     ]
     const moduleMetadata = MockBuilder(BarcodeReaderComponent, AppModule)
       .mock(ZXingScannerModule)
+      .mock(MatDialogModule)
+      .provide({ provide: MatDialogRef, useValue: {} })
       .keep(ReactiveFormsModule)
       .build()
     MockInstance(ZXingScannerComponent, 'camerasFound', testEmitter)
@@ -61,6 +59,8 @@ describe('BarcodeReaderComponent', () => {
     ]
     const moduleMetadata = MockBuilder(BarcodeReaderComponent, AppModule)
       .mock(ZXingScannerModule)
+      .mock(MatDialogModule)
+      .provide({ provide: MatDialogRef, useValue: {} })
       .keep(ReactiveFormsModule)
       .build()
     const mockDeviceSet = jest.fn()
@@ -82,20 +82,23 @@ describe('BarcodeReaderComponent', () => {
     expect(mockDeviceSet).toHaveBeenNthCalledWith(2, mockDevice1)
   })
 
-  it('shoud set the code when a code is sucessfully scanned', async () => {
+  it('should close and return the code when a code is successfully scanned', async () => {
     const testEmitter = new EventEmitter<string>()
 
     const expected = 'code'
+    const mockClose = jest.fn()
     const moduleMetadata = MockBuilder(BarcodeReaderComponent, AppModule)
       .mock(ZXingScannerModule)
+      .provide({ provide: MatDialogRef, useValue: { close: mockClose } })
       .keep(ReactiveFormsModule)
       .build()
     MockInstance(ZXingScannerComponent, 'scanSuccess', testEmitter)
 
-    const { fixture } = await render(BarcodeReaderComponent, moduleMetadata)
+    await render(BarcodeReaderComponent, moduleMetadata)
 
     testEmitter.emit(expected)
 
-    expect(fixture.componentInstance.code).toBe(expected)
+    expect(mockClose).toHaveBeenCalledTimes(1)
+    expect(mockClose).toHaveBeenNthCalledWith(1, expected)
   })
 })

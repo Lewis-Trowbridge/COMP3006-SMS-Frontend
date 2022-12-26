@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatGridListModule } from '@angular/material/grid-list'
 import { HttpClientModule } from '@angular/common/http'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatDialogModule } from '@angular/material/dialog'
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
     MatButtonModule,
     MatGridListModule,
     HttpClientModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]
