@@ -1,13 +1,17 @@
-<p>barcode-reader works!</p>
-<zxing-scanner class="barcode"
-               (camerasFound)="handleCamerasFound($event)"
-               (scanSuccess)="handleSuccess($event)"
-               [(device)]="currentMediaDevice"
-></zxing-scanner>
-<select [formControl]="cameraFormControl">
-  <ng-container *ngFor="let media of mediaDevices">
-    <option [value]="media.label">
-      {{ media.label }}
-    </option>
-  </ng-container>
-</select>
+<h2 mat-dialog-title>Scan barcode</h2>
+<mat-dialog-content>
+  <zxing-scanner class="barcode"
+                 (camerasFound)="handleCamerasFound($event)"
+                 (scanSuccess)="handleSuccess($event)"
+                 [(device)]="currentMediaDevice"
+                 [formats]="barcodeFormats"
+  ></zxing-scanner>
+  <select [formControl]="cameraFormControl">
+    <ng-container *ngFor="let media of mediaDevices">
+      <option [value]="media.label">
+        {{ media.label }}
+      </option>
+    </ng-container>
+  </select>
+</mat-dialog-content>
+
