@@ -9,7 +9,8 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatGridListModule } from '@angular/material/grid-list'
 import userEvent from '@testing-library/user-event'
 import { IItem, ItemServiceService } from '../item-service.service'
-import { Observable } from 'rxjs'
+import { Observable, Subject } from 'rxjs'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 describe('ItemFormComponent', () => {
   const user = userEvent.setup()
@@ -68,6 +69,7 @@ describe('ItemFormComponent', () => {
       .keep(MatButtonModule)
       .keep(MatButtonModule)
       .keep(MatGridListModule)
+      .keep(MatProgressSpinnerModule)
       .build()
     const item: IItem = {
       name: 'name',
@@ -75,13 +77,8 @@ describe('ItemFormComponent', () => {
       position: 'position',
       stock: 1
     }
-    let sendData = false
-    const mockCreate = jest.fn().mockReturnValue(new Observable<IItem>((observer) => {
-      // eslint-disable-next-line no-unmodified-loop-condition
-      while (!sendData) { console.log(sendData)/* wait until switch flipped to send value */ }
-
-      observer.next(item)
-    }))
+    const fakeSubject = new Subject<IItem>()
+    const mockCreate = jest.fn().mockReturnValue(fakeSubject)
     MockInstance(ItemServiceService, 'create', mockCreate)
 
     const { findByRole, detectChanges } = await render(ItemFormComponent, moduleMetadata)
@@ -110,12 +107,13 @@ describe('ItemFormComponent', () => {
     expect(submitButton).not.toHaveTextContent('Create')
     expect(submitButton).toContainElement(spinner)
 
-    sendData = true
+    // Send data to subscribed observer in component
+    fakeSubject.next(item)
     detectChanges()
     expect(spinner).not.toBeInTheDocument()
     expect(submitButton).toHaveTextContent('Create')
 
     expect(mockCreate).toHaveBeenCalledTimes(1)
     expect(mockCreate).toHaveBeenNthCalledWith(1, item)
-  })
+  }, 10000)
 })
