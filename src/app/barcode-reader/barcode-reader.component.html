@@ -4,6 +4,7 @@
                  (camerasFound)="handleCamerasFound($event)"
                  (scanSuccess)="handleSuccess($event)"
                  [(device)]="currentMediaDevice"
+                 [formats]="barcodeFormats"
   ></zxing-scanner>
   <select [formControl]="cameraFormControl">
     <ng-container *ngFor="let media of mediaDevices">
