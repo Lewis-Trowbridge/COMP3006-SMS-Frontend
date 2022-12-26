@@ -1,4 +1,4 @@
-import { render } from '@testing-library/angular'
+import { render, screen } from '@testing-library/angular'
 import { MockBuilder, MockInstance } from 'ng-mocks'
 import { ItemFormComponent } from './item-form.component'
 import { AppModule } from '../app.module'
@@ -11,6 +11,7 @@ import userEvent from '@testing-library/user-event'
 import { IItem, ItemServiceService } from '../item-service.service'
 import { Observable, Subject } from 'rxjs'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 
 describe('ItemFormComponent', () => {
   const user = userEvent.setup()
@@ -58,6 +59,58 @@ describe('ItemFormComponent', () => {
     await user.click(submitButton)
 
     expect(mockCreate).not.toHaveBeenCalled()
+  })
+
+  it('opens the barcode scanner dialog when the scan button is clicked', async () => {
+    const user = userEvent.setup()
+    const moduleMetadata = MockBuilder(ItemFormComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatFormFieldModule)
+      .keep(MatInputModule)
+      .keep(MatButtonModule)
+      .keep(MatButtonModule)
+      .keep(MatGridListModule)
+      .keep(MatProgressSpinnerModule)
+      .keep(MatDialogModule)
+      .build()
+
+    const { findByRole } = await render(ItemFormComponent, moduleMetadata)
+
+    const scanButton = await findByRole('button', { name: 'Scan' })
+    await user.click(scanButton)
+    const dialog = await screen.findByRole('dialog')
+    expect(dialog).toBeInTheDocument()
+  })
+
+  it('displays the result in the barcode form on a successful scan', async () => {
+    const user = userEvent.setup()
+    const barcode = 'barcode'
+    const fakeSubject = new Subject<string>()
+    const mockAfterClosed = jest.fn().mockReturnValue(fakeSubject)
+    const moduleMetadata = MockBuilder(ItemFormComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatFormFieldModule)
+      .keep(MatInputModule)
+      .keep(MatButtonModule)
+      .keep(MatButtonModule)
+      .keep(MatGridListModule)
+      .keep(MatProgressSpinnerModule)
+      .keep(MatDialogModule)
+      .provide({
+        provide: MatDialog,
+        useValue: {
+          open: jest.fn().mockReturnValue({ afterClosed: mockAfterClosed })
+        }
+      })
+      .build()
+    const { findByRole, findByLabelText } = await render(ItemFormComponent, moduleMetadata)
+
+    const scanButton = await findByRole('button', { name: 'Scan' })
+    await user.click(scanButton)
+    fakeSubject.next(barcode)
+
+    const barcodeInput = await findByLabelText('Barcode')
+    expect(barcodeInput).toHaveValue(barcode)
   })
 
   it('calls the create method when all valid fields are filled', async () => {

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { IItem, ItemServiceService } from '../item-service.service'
+import { MatDialog } from '@angular/material/dialog'
+import { BarcodeReaderComponent } from '../barcode-reader/barcode-reader.component'
 
 @Component({
   selector: 'app-item-form',
@@ -17,7 +19,8 @@ export class ItemFormComponent {
 
   isLoading = false
 
-  constructor (private readonly itemService: ItemServiceService) { }
+  constructor (private readonly itemService: ItemServiceService,
+    private readonly dialog: MatDialog) { }
 
   onSubmit (): void {
     if (this.itemGroup.valid) {
@@ -27,5 +30,10 @@ export class ItemFormComponent {
         this.isLoading = false
       })
     }
+  }
+
+  onScanButtonClick (): void {
+    this.dialog.open(BarcodeReaderComponent).afterClosed()
+      .subscribe(result => this.itemGroup.controls.barcode.setValue(result))
   }
 }
