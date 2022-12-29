@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
+import { RouterModule, Routes } from '@angular/router'
 
 import { AppComponent } from './app.component'
 import { BarcodeReaderComponent } from './barcode-reader/barcode-reader.component'
@@ -14,6 +15,11 @@ import { MatGridListModule } from '@angular/material/grid-list'
 import { HttpClientModule } from '@angular/common/http'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatDialogModule } from '@angular/material/dialog'
+import { MatToolbarModule } from '@angular/material/toolbar'
+
+const routes: Routes = [
+  { path: 'item/create', component: ItemFormComponent }
+]
 
 @NgModule({
   declarations: [
@@ -23,6 +29,7 @@ import { MatDialogModule } from '@angular/material/dialog'
   ],
   imports: [
     BrowserModule,
+    RouterModule.forRoot(routes),
     ZXingScannerModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
@@ -32,7 +39,8 @@ import { MatDialogModule } from '@angular/material/dialog'
     MatGridListModule,
     HttpClientModule,
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatDialogModule,
+    MatToolbarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
