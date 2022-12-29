@@ -15,7 +15,8 @@ import { MatGridListModule } from '@angular/material/grid-list'
 import { HttpClientModule } from '@angular/common/http'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatDialogModule } from '@angular/material/dialog'
-
+import { MatToolbarModule } from '@angular/material/toolbar'
+ 
 const routes: Routes = [
   { path: 'item/create', component: ItemFormComponent }
 ]
@@ -38,7 +39,8 @@ const routes: Routes = [
     MatGridListModule,
     HttpClientModule,
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatDialogModule,
+    MatToolbarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
