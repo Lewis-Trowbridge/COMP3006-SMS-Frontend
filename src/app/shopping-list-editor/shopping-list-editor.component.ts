@@ -21,7 +21,7 @@ export class ShoppingListEditorComponent implements OnInit {
       new FormGroup<IShoppingListItemFormGroup>({
         _id: new FormControl<string>('', { nonNullable: true }),
         text: new FormControl<string>('', { nonNullable: true }),
-        quantity: new FormControl<number>(0, { nonNullable: true })
+        quantity: new FormControl<number>(1, { nonNullable: true })
       })
     ])
   })
@@ -50,7 +50,7 @@ export class ShoppingListEditorComponent implements OnInit {
     this.items.push(new FormGroup<IShoppingListItemFormGroup>({
       _id: new FormControl<string>('', { nonNullable: true }),
       text: new FormControl<string>('', { nonNullable: true }),
-      quantity: new FormControl<number>(0, { nonNullable: true })
+      quantity: new FormControl<number>(1, { nonNullable: true })
     }))
   }
 }

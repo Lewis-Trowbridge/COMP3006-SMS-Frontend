@@ -116,6 +116,8 @@ describe('ShoppingListEditorComponent', () => {
     const textInput = await findByLabelText('Item 1 text')
     fixture.componentInstance.items.valueChanges.subscribe(value => { changes = value as unknown as IShoppingListItem })
     await user.type(textInput, expectedChanges)
-    await waitFor(() => expect(changes).toContainEqual({ _id: '', text: expectedChanges, quantity: 0 }))
+    await waitFor(
+      () => expect(changes).toContainEqual({ _id: '', text: expectedChanges, quantity: 1 }
+      ))
   })
 })
