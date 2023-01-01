@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
+import { IShoppingListItem, ShoppingListServiceService } from '../shopping-list-service.service'
+import { FormArray, FormControl, FormGroup } from '@angular/forms'
+import { Observable } from 'rxjs'
 
-interface IShoppingListItem {
-  text: string
-  quantity: number
+interface IShoppingListItemFormGroup {
+  _id: FormControl<string>
+  text: FormControl<string>
+  quantity: FormControl<number>
 }
 
 @Component({
@@ -12,16 +16,33 @@ interface IShoppingListItem {
   styleUrls: ['./shopping-list-editor.component.css']
 })
 export class ShoppingListEditorComponent implements OnInit {
-  listId = ''
-  items: IShoppingListItem[] = []
+  formGroup = new FormGroup({
+    items: new FormArray([
+      new FormGroup<IShoppingListItemFormGroup>({
+        _id: new FormControl<string>('', { nonNullable: true }),
+        text: new FormControl<string>('', { nonNullable: true }),
+        quantity: new FormControl<number>(0, { nonNullable: true })
+      })
+    ])
+  })
 
-  constructor (private readonly routeInfo: ActivatedRoute) {}
+  listId = ''
+
+  get items (): FormArray<FormGroup<IShoppingListItemFormGroup>> {
+    return this.formGroup.controls.items
+  }
+
+  constructor (private readonly routeInfo: ActivatedRoute,
+    private readonly shoppingListService: ShoppingListServiceService) {}
 
   ngOnInit (): void {
-    // Set list ID
     this.routeInfo.paramMap.subscribe(params => {
       this.listId = params.get('listId') ?? ''
     })
-    // Get item data
+
+    this.shoppingListService.registerChangeObservers(
+      this.listId,
+      this.items.valueChanges as Observable<IShoppingListItem[]>)
+      .subscribe(canonical => this.items.setValue(canonical))
   }
 }

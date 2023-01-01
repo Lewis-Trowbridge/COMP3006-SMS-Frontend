@@ -18,10 +18,16 @@ import { MatDialogModule } from '@angular/material/dialog'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { ShoppingListEditorComponent } from './shopping-list-editor/shopping-list-editor.component'
 import { MatListModule } from '@angular/material/list'
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io'
+import { environment } from '../environments/environment'
 
 const routes: Routes = [
   { path: 'item/create', component: ItemFormComponent }
 ]
+
+const socketIoConfig: SocketIoConfig = {
+  url: environment.BACKEND_URL
+}
 
 @NgModule({
   declarations: [
@@ -44,7 +50,8 @@ const routes: Routes = [
     MatProgressSpinnerModule,
     MatDialogModule,
     MatToolbarModule,
-    MatListModule
+    MatListModule,
+    SocketIoModule.forRoot(socketIoConfig)
   ],
   providers: [],
   bootstrap: [AppComponent]

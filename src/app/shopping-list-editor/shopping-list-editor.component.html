@@ -1,3 +1,10 @@
-<mat-list>
-
+<mat-list [formGroup]="formGroup">
+  <ng-container formArrayName="items">
+    <ng-container *ngFor="let itemGroup of items.controls; let i = index">
+      <mat-list-item [formGroup]="itemGroup">
+        <input class="list-quantity" matInput type="number" [formControl]="itemGroup.controls.quantity" attr.aria-label="Item {{i + 1}} quantity">
+        <input class="list-text" matInput type="text" [formControl]="itemGroup.controls.text" attr.aria-label="Item {{i + 1}} text">
+      </mat-list-item>
+    </ng-container>
+  </ng-container>
 </mat-list>
