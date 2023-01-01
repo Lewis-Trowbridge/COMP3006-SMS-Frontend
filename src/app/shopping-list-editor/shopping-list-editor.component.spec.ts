@@ -11,6 +11,7 @@ import { ShoppingListServiceService, IShoppingListItem } from '../shopping-list-
 import userEvent from '@testing-library/user-event'
 import { MatIconModule } from '@angular/material/icon'
 import { MatButtonModule } from '@angular/material/button'
+import { waitFor } from '@testing-library/dom'
 
 describe('ShoppingListEditorComponent', () => {
   it('gets the list ID from a route on creation', async () => {
@@ -88,5 +89,33 @@ describe('ShoppingListEditorComponent', () => {
     expect(await findByLabelText('Item 1 text')).toBeInTheDocument()
     expect(await findByLabelText('Item 2 quantity')).toBeInTheDocument()
     expect(await findByLabelText('Item 2 text')).toBeInTheDocument()
+  })
+
+  it('sends an update to the service observer when a change is made', async () => {
+    const user = userEvent.setup()
+    const expectedListId = 'list'
+    const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatListModule)
+      .keep(MatInputModule)
+      .keep(MatIconModule)
+      .keep(MatButtonModule)
+      .provide({
+        provide: ActivatedRoute,
+        useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
+      })
+      .build()
+    let changes: IShoppingListItem = { _id: '', text: '', quantity: 0 }
+    const expectedChanges = 'item'
+    const fakeCanonicalObserver = new Subject<IShoppingListItem[]>()
+    const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeCanonicalObserver)
+    MockInstance(ShoppingListServiceService, 'registerChangeObservers', mockRegisterChangeObservers)
+
+    const { fixture, findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
+
+    const textInput = await findByLabelText('Item 1 text')
+    fixture.componentInstance.items.valueChanges.subscribe(value => { changes = value as unknown as IShoppingListItem })
+    await user.type(textInput, expectedChanges)
+    await waitFor(() => expect(changes).toContainEqual({ _id: '', text: expectedChanges, quantity: 0 }))
   })
 })
