@@ -2,9 +2,16 @@
   <ng-container formArrayName="items">
     <ng-container *ngFor="let itemGroup of items.controls; let i = index">
       <mat-list-item [formGroup]="itemGroup">
-        <input class="list-quantity" matInput type="number" [formControl]="itemGroup.controls.quantity" attr.aria-label="Item {{i + 1}} quantity">
-        <input class="list-text" matInput type="text" [formControl]="itemGroup.controls.text" attr.aria-label="Item {{i + 1}} text">
+        <mat-form-field appearance="fill">
+          <input class="list-quantity" matInput type="number" [formControl]="itemGroup.controls.quantity" attr.aria-label="Item {{i + 1}} quantity">
+          <input class="list-text" matInput type="text" [formControl]="itemGroup.controls.text" attr.aria-label="Item {{i + 1}} text">
+        </mat-form-field>
       </mat-list-item>
     </ng-container>
   </ng-container>
+  <mat-list-item>
+    <button mat-button (click)="addItem()" aria-label="Add new item">
+      <mat-icon fontIcon="add"></mat-icon>
+    </button>
+  </mat-list-item>
 </mat-list>

@@ -33,7 +33,7 @@ export class ShoppingListEditorComponent implements OnInit {
   }
 
   constructor (private readonly routeInfo: ActivatedRoute,
-    private readonly shoppingListService: ShoppingListServiceService) {}
+    private readonly shoppingListService: ShoppingListServiceService) { }
 
   ngOnInit (): void {
     this.routeInfo.paramMap.subscribe(params => {
@@ -44,5 +44,13 @@ export class ShoppingListEditorComponent implements OnInit {
       this.listId,
       this.items.valueChanges as Observable<IShoppingListItem[]>)
       .subscribe(canonical => this.items.setValue(canonical))
+  }
+
+  addItem (): void {
+    this.items.push(new FormGroup<IShoppingListItemFormGroup>({
+      _id: new FormControl<string>('', { nonNullable: true }),
+      text: new FormControl<string>('', { nonNullable: true }),
+      quantity: new FormControl<number>(0, { nonNullable: true })
+    }))
   }
 }

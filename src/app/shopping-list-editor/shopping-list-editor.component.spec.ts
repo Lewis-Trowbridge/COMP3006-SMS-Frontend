@@ -8,6 +8,9 @@ import { ReactiveFormsModule } from '@angular/forms'
 import { MatListModule } from '@angular/material/list'
 import { MatInputModule } from '@angular/material/input'
 import { ShoppingListServiceService, IShoppingListItem } from '../shopping-list-service.service'
+import userEvent from '@testing-library/user-event'
+import { MatIconModule } from '@angular/material/icon'
+import { MatButtonModule } from '@angular/material/button'
 
 describe('ShoppingListEditorComponent', () => {
   it('gets the list ID from a route on creation', async () => {
@@ -18,6 +21,9 @@ describe('ShoppingListEditorComponent', () => {
         useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
       })
       .build()
+    const fakeCanonicalObserver = new Subject<IShoppingListItem[]>()
+    const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeCanonicalObserver)
+    MockInstance(ShoppingListServiceService, 'registerChangeObservers', mockRegisterChangeObservers)
 
     const { fixture } = await render(ShoppingListEditorComponent, moduleMetadata)
 
@@ -53,5 +59,34 @@ describe('ShoppingListEditorComponent', () => {
 
     expect(quantityElement).toHaveValue(expectedItem.quantity)
     expect(textElement).toHaveValue(expectedItem.text)
+  })
+
+  it('makes a new row when the add button is clicked', async () => {
+    const user = userEvent.setup()
+    const expectedListId = 'list'
+    const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatListModule)
+      .keep(MatInputModule)
+      .keep(MatIconModule)
+      .keep(MatButtonModule)
+      .provide({
+        provide: ActivatedRoute,
+        useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
+      })
+      .build()
+    const fakeCanonicalObserver = new Subject<IShoppingListItem[]>()
+    const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeCanonicalObserver)
+    MockInstance(ShoppingListServiceService, 'registerChangeObservers', mockRegisterChangeObservers)
+
+    const { findByRole, findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
+
+    const addButton = await findByRole('button', { name: 'Add new item' })
+    await user.click(addButton)
+
+    expect(await findByLabelText('Item 1 quantity')).toBeInTheDocument()
+    expect(await findByLabelText('Item 1 text')).toBeInTheDocument()
+    expect(await findByLabelText('Item 2 quantity')).toBeInTheDocument()
+    expect(await findByLabelText('Item 2 text')).toBeInTheDocument()
   })
 })

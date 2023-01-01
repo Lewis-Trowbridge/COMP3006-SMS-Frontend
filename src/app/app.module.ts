@@ -18,6 +18,7 @@ import { MatDialogModule } from '@angular/material/dialog'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { ShoppingListEditorComponent } from './shopping-list-editor/shopping-list-editor.component'
 import { MatListModule } from '@angular/material/list'
+import { MatIconModule } from '@angular/material/icon'
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io'
 import { environment } from '../environments/environment'
 
@@ -26,7 +27,7 @@ const routes: Routes = [
 ]
 
 const socketIoConfig: SocketIoConfig = {
-  url: environment.BACKEND_URL
+  url: `${environment.BACKEND_URL}/`
 }
 
 @NgModule({
@@ -51,6 +52,7 @@ const socketIoConfig: SocketIoConfig = {
     MatDialogModule,
     MatToolbarModule,
     MatListModule,
+    MatIconModule,
     SocketIoModule.forRoot(socketIoConfig)
   ],
   providers: [],
