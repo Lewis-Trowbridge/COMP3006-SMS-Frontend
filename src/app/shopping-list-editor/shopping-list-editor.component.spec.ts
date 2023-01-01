@@ -116,8 +116,37 @@ describe('ShoppingListEditorComponent', () => {
     const textInput = await findByLabelText('Item 1 text')
     fixture.componentInstance.items.valueChanges.subscribe(value => { changes = value as unknown as IShoppingListItem })
     await user.type(textInput, expectedChanges)
-    await waitFor(
-      () => expect(changes).toContainEqual({ _id: '', text: expectedChanges, quantity: 1 }
-      ))
+    await waitFor(() => expect(changes).toContainEqual({ _id: '', text: expectedChanges, quantity: 1 }))
+  })
+
+  it('sends an update to the service observer when a change is made to an exsiting item', async () => {
+    const user = userEvent.setup()
+    const expectedListId = 'list'
+    const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatListModule)
+      .keep(MatInputModule)
+      .keep(MatIconModule)
+      .keep(MatButtonModule)
+      .provide({
+        provide: ActivatedRoute,
+        useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
+      })
+      .build()
+    let changes: IShoppingListItem[] = [{ _id: '', text: '', quantity: 0 }]
+    const fakeCanonicalObserver = new Subject<IShoppingListItem[]>()
+    const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeCanonicalObserver)
+    MockInstance(ShoppingListServiceService, 'registerChangeObservers', mockRegisterChangeObservers)
+
+    const { fixture, findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
+
+    const expectedChanges = 'item'
+    const expectedChanges2 = 'extended'
+    const textInput = await findByLabelText('Item 1 text')
+    fixture.componentInstance.items.valueChanges.subscribe(value => { changes = value as unknown as IShoppingListItem[] })
+    await user.type(textInput, expectedChanges)
+    await waitFor(() => expect(changes[0].text).toEqual(expectedChanges))
+    await user.type(textInput, expectedChanges2)
+    await waitFor(() => expect(changes[0].text).toEqual(expectedChanges + expectedChanges2))
   })
 })
