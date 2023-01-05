@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { IShoppingListItem, ShoppingListServiceService } from '../shopping-list-service.service'
+import { IShoppingListItem, ShoppingListServiceService } from '../shopping-list-socket.service'
 import { FormArray, FormControl, FormGroup } from '@angular/forms'
 import { Observable } from 'rxjs'
 
@@ -33,14 +33,14 @@ export class ShoppingListEditorComponent implements OnInit {
   }
 
   constructor (private readonly routeInfo: ActivatedRoute,
-    private readonly shoppingListService: ShoppingListServiceService) { }
+    private readonly shoppingListSocketService: ShoppingListServiceService) { }
 
   ngOnInit (): void {
     this.routeInfo.paramMap.subscribe(params => {
       this.listId = params.get('listId') ?? ''
     })
 
-    this.shoppingListService.registerChangeObservers(
+    this.shoppingListSocketService.registerChangeObservers(
       this.listId,
       this.items.valueChanges as Observable<IShoppingListItem[]>)
       .subscribe(canonical => this.items.setValue(canonical))
