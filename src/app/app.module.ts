@@ -16,16 +16,27 @@ import { HttpClientModule } from '@angular/common/http'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatToolbarModule } from '@angular/material/toolbar'
+import { ShoppingListEditorComponent } from './shopping-list-editor/shopping-list-editor.component'
+import { MatListModule } from '@angular/material/list'
+import { MatIconModule } from '@angular/material/icon'
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io'
+import { environment } from '../environments/environment'
 
 const routes: Routes = [
-  { path: 'item/create', component: ItemFormComponent }
+  { path: 'item/create', component: ItemFormComponent },
+  { path: 'lists/edit/:listId', component: ShoppingListEditorComponent }
 ]
+
+const socketIoConfig: SocketIoConfig = {
+  url: `${environment.BACKEND_URL}/`
+}
 
 @NgModule({
   declarations: [
     AppComponent,
     BarcodeReaderComponent,
-    ItemFormComponent
+    ItemFormComponent,
+    ShoppingListEditorComponent
   ],
   imports: [
     BrowserModule,
@@ -40,7 +51,10 @@ const routes: Routes = [
     HttpClientModule,
     MatProgressSpinnerModule,
     MatDialogModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatListModule,
+    MatIconModule,
+    SocketIoModule.forRoot(socketIoConfig)
   ],
   providers: [],
   bootstrap: [AppComponent]
