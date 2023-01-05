@@ -9,6 +9,7 @@ export interface IShoppingListItem {
 }
 
 export interface IShoppingList {
+  _id: string
   ownerId: string
   editors: string[]
   created: Date
