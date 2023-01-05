@@ -23,7 +23,8 @@ import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io'
 import { environment } from '../environments/environment'
 
 const routes: Routes = [
-  { path: 'item/create', component: ItemFormComponent }
+  { path: 'item/create', component: ItemFormComponent },
+  { path: 'lists/edit/:listId', component: ShoppingListEditorComponent }
 ]
 
 const socketIoConfig: SocketIoConfig = {
