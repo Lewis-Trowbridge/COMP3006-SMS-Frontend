@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { IShoppingListItem, ShoppingListServiceService as ShoppingListSocketService } from '../shopping-list-socket.service'
+import { IShoppingListItem, ShoppingListSocketService } from '../shopping-list-socket.service'
 import { FormArray, FormControl, FormGroup } from '@angular/forms'
 import { Observable } from 'rxjs'
 import { ShoppingListRESTService } from '../shopping-list-rest.service'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const ObjectID = require('bson-objectid')
 
 interface IShoppingListItemFormGroup {
   _id: FormControl<string>
@@ -40,32 +42,33 @@ export class ShoppingListEditorComponent implements OnInit {
   ngOnInit (): void {
     this.routeInfo.paramMap.subscribe(params => {
       this.listId = params.get('listId') ?? ''
-      console.log(this.listId)
-      this.shoppingListRestService.get(this.listId).subscribe(data => {
-        while (this.items.length !== 0) {
-          this.items.removeAt(0, { emitEvent: false })
-        }
-        for (const item of data.items) {
-          this.items.push(new FormGroup<IShoppingListItemFormGroup>({
-            _id: new FormControl<string>(item._id, { nonNullable: true }),
-            text: new FormControl<string>(item.text, { nonNullable: true }),
-            quantity: new FormControl<number>(item.quantity, { nonNullable: true })
-          }), { emitEvent: false })
-        }
-      })
+      this.shoppingListRestService.get(this.listId).subscribe(data => this.displayChanges(data.items))
 
       this.shoppingListSocketService.registerChangeObservers(
         this.listId,
         this.items.valueChanges as Observable<IShoppingListItem[]>)
-        .subscribe(canonical => this.items.setValue(canonical))
+        .subscribe(canonical => this.displayChanges(canonical))
     })
   }
 
   addItem (): void {
     this.items.push(new FormGroup<IShoppingListItemFormGroup>({
-      _id: new FormControl<string>('', { nonNullable: true }),
+      _id: new FormControl<string>(ObjectID().toHexString(), { nonNullable: true }),
       text: new FormControl<string>('', { nonNullable: true }),
       quantity: new FormControl<number>(1, { nonNullable: true })
     }))
+  }
+
+  private displayChanges (changes: IShoppingListItem[]): void {
+    while (this.items.length !== 0) {
+      this.items.removeAt(0, { emitEvent: false })
+    }
+    for (const item of changes) {
+      this.items.push(new FormGroup<IShoppingListItemFormGroup>({
+        _id: new FormControl<string>(item._id, { nonNullable: true }),
+        text: new FormControl<string>(item.text, { nonNullable: true }),
+        quantity: new FormControl<number>(item.quantity, { nonNullable: true })
+      }), { emitEvent: false })
+    }
   }
 }

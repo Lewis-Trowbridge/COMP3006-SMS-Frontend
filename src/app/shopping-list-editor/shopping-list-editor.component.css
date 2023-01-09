@@ -1,7 +1,9 @@
 .list-quantity {
   width: 20%;
+  margin: 3px;
 }
 
 .list-text {
-  width: 80%;
+  width: 75%;
+  margin: 3px;
 }

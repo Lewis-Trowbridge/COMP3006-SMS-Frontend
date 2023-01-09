@@ -20,7 +20,7 @@ export interface IShoppingList {
 @Injectable({
   providedIn: 'root'
 })
-export class ShoppingListServiceService {
+export class ShoppingListSocketService {
   constructor (private readonly socket: Socket) { }
 
   registerChangeObservers (listId: string, changes: Observable<IShoppingListItem[]>): Observable<IShoppingListItem[]> {
