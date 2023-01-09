@@ -1,4 +1,4 @@
-import { ShoppingListSocketService as ShoppingListSocketService, IShoppingListItem } from './shopping-list-socket.service'
+import { ShoppingListSocketService, IShoppingListItem } from './shopping-list-socket.service'
 import { mock } from 'jest-mock-extended'
 import { WrappedSocket } from 'ngx-socket-io/src/socket-io.service'
 import { of, Subject } from 'rxjs'
