@@ -14,6 +14,10 @@ export class ShoppingListRESTService {
     return this.httpClient.get<IShoppingList>(`${environment.BACKEND_URL}/lists/get`, { params: { listId } })
   }
 
+  create (): Observable<IShoppingList> {
+    return this.httpClient.post<IShoppingList>(`${environment.BACKEND_URL}/lists/create`, {})
+  }
+
   listAll (): Observable<IShoppingList[]> {
     return this.httpClient.get<IShoppingList[]>(`${environment.BACKEND_URL}/lists/list-all`)
       .pipe(map(response => {

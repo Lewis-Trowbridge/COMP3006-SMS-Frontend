@@ -1,3 +1,4 @@
+<button mat-raised-button (click)="create()">New</button>
 <div class="list">
     <ng-container *ngIf="lists.length > 0; else noLists">
         <div *ngFor="let list of lists" class="card">
