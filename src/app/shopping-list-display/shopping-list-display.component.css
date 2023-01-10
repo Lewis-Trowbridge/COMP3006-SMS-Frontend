@@ -1,0 +1,9 @@
+.list {
+    display: flex;
+    flex-direction: column;
+}
+
+.card {
+    flex: content;
+    margin: 1vh;
+}

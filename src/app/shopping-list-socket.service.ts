@@ -13,7 +13,7 @@ export interface IShoppingList {
   ownerId: string
   editors: string[]
   created: Date
-  updated: Date | null
+  updated: Date
   items: IShoppingListItem[]
 }
 
