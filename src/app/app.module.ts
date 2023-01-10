@@ -19,11 +19,14 @@ import { MatToolbarModule } from '@angular/material/toolbar'
 import { ShoppingListEditorComponent } from './shopping-list-editor/shopping-list-editor.component'
 import { MatListModule } from '@angular/material/list'
 import { MatIconModule } from '@angular/material/icon'
+import { MatCardModule } from '@angular/material/card'
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io'
 import { environment } from '../environments/environment'
+import { ShoppingListDisplayComponent } from './shopping-list-display/shopping-list-display.component'
 
 const routes: Routes = [
   { path: 'item/create', component: ItemFormComponent },
+  { path: 'lists', component: ShoppingListDisplayComponent },
   { path: 'lists/edit/:listId', component: ShoppingListEditorComponent }
 ]
 
@@ -36,7 +39,8 @@ const socketIoConfig: SocketIoConfig = {
     AppComponent,
     BarcodeReaderComponent,
     ItemFormComponent,
-    ShoppingListEditorComponent
+    ShoppingListEditorComponent,
+    ShoppingListDisplayComponent
   ],
   imports: [
     BrowserModule,
@@ -54,6 +58,7 @@ const socketIoConfig: SocketIoConfig = {
     MatToolbarModule,
     MatListModule,
     MatIconModule,
+    MatCardModule,
     SocketIoModule.forRoot(socketIoConfig)
   ],
   providers: [],
