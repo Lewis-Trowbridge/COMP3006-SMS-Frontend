@@ -49,6 +49,35 @@ describe('ShoppingListRESTService', () => {
     })
   })
 
+  describe('create', () => {
+    it('should make a request to the backend with the given data', (done) => {
+      const testList: IShoppingList = {
+        _id: 'listId',
+        ownerId: 'user',
+        editors: [],
+        created: new Date(),
+        updated: new Date(),
+        items: []
+      }
+      const response = service.create()
+      response.subscribe(data => {
+        expect(data).toEqual(testList)
+        done()
+      })
+
+      const req = httpTestingController.expectOne({
+        url: `${environment.BACKEND_URL}/lists/create`,
+        method: 'POST'
+      })
+
+      req.flush(testList)
+
+      expect(req.request.body).toEqual({})
+
+      httpTestingController.verify()
+    })
+  })
+
   describe('listAll', () => {
     it('should make a request to the backend with the given data', (done) => {
       const testList: IShoppingList = {

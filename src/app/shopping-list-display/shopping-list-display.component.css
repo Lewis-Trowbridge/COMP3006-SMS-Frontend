@@ -7,3 +7,13 @@
     flex: content;
     margin: 1vh;
 }
+
+.no-list-message {
+    font-size: 2rem;
+    text-align: center;
+    color: #A9A9A9;
+}
+
+.global-button-row {
+    display: flex;
+}
