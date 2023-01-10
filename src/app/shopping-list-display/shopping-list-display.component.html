@@ -1,16 +1,21 @@
 <div class="list">
-    <div *ngFor="let list of lists" class="card">
-        <mat-card>
-            <mat-card-header>
-                <mat-card-title>{{ list.ownerId }}'s list</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <p>Created: {{ list.created.toUTCString() }}</p>
-                <p>Updated: {{ list.updated.toUTCString() }} </p>
-            </mat-card-content>
-            <mat-card-actions>
-                <a mat-raised-button [routerLink]="['/lists/edit', list._id]">Edit</a>
-            </mat-card-actions>
-        </mat-card>
-    </div>
+    <ng-container *ngIf="lists.length > 0; else noLists">
+        <div *ngFor="let list of lists" class="card">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>{{ list.ownerId }}'s list</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <p>Created: {{ list.created.toUTCString() }}</p>
+                    <p>Updated: {{ list.updated.toUTCString() }} </p>
+                </mat-card-content>
+                <mat-card-actions>
+                    <a mat-raised-button [routerLink]="['/lists/edit', list._id]">Edit</a>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </ng-container>
+    <ng-template #noLists>
+        <p class="no-list-message">It looks like you don't have any shopping lists yet. Why not create one?</p>
+    </ng-template>
 <div>

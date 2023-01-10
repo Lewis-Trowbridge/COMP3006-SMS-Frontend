@@ -8,7 +8,21 @@ import { IShoppingList } from '../shopping-list-socket.service'
 import { ShoppingListDisplayComponent } from './shopping-list-display.component'
 
 describe('ShoppingListDisplayComponent', () => {
-  it('loads all available cards on load', async () => {
+  it('shows a message if no lists are returned', async () => {
+    const moduleMetadata = MockBuilder(ShoppingListDisplayComponent, AppModule)
+      .keep(RouterModule)
+      .build()
+    MockInstance(ShoppingListRESTService, 'listAll', () => of<IShoppingList[]>([]))
+
+    const { findByText } = await render(ShoppingListDisplayComponent, moduleMetadata)
+
+    const message = await findByText('It looks like you don\'t have any shopping lists yet. Why not create one?')
+
+    expect(message).toBeInTheDocument()
+    expect(message).toHaveClass('no-list-message')
+  })
+
+  it('loads all available lists on load', async () => {
     const currentTime = new Date()
     const fakeShoppingList: IShoppingList = {
       _id: 'listId',
