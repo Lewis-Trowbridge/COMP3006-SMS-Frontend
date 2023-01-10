@@ -1,12 +1,13 @@
-.spacer {
-    flex: 1 1 auto;
-}
-
 .toolbar-link {
     margin: 1rem;
 }
 
 .container {
     display: flex;
+    flex-direction: column;
     margin: 1rem;
+}
+
+.content {
+    flex: auto;
 }
