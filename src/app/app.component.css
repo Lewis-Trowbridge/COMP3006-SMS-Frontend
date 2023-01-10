@@ -5,3 +5,8 @@
 .toolbar-link {
     margin: 1rem;
 }
+
+.container {
+    display: flex;
+    margin: 1rem;
+}
