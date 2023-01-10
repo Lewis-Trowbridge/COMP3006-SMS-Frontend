@@ -1,7 +1,6 @@
 import { RouterModule } from '@angular/router'
-import { RouterTestingModule } from '@angular/router/testing'
 import { render } from '@testing-library/angular'
-import { MockBuilder, MockInstance, NG_MOCKS_ROOT_PROVIDERS } from 'ng-mocks'
+import { MockBuilder, MockInstance } from 'ng-mocks'
 import { of } from 'rxjs'
 import { AppModule } from '../app.module'
 import { ShoppingListRESTService } from '../shopping-list-rest.service'
@@ -20,10 +19,7 @@ describe('ShoppingListDisplayComponent', () => {
       items: []
     }
     const moduleMetadata = MockBuilder(ShoppingListDisplayComponent, AppModule)
-      .mock(ShoppingListRESTService)
       .keep(RouterModule)
-      .keep(RouterTestingModule.withRoutes([]), { export: true })
-      .keep(NG_MOCKS_ROOT_PROVIDERS)
       .build()
     MockInstance(ShoppingListRESTService, 'listAll', () => of<IShoppingList[]>([fakeShoppingList]))
 
