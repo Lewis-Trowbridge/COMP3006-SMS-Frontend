@@ -20,6 +20,7 @@ import { ShoppingListEditorComponent } from './shopping-list-editor/shopping-lis
 import { MatListModule } from '@angular/material/list'
 import { MatIconModule } from '@angular/material/icon'
 import { MatCardModule } from '@angular/material/card'
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io'
 import { environment } from '../environments/environment'
 import { ShoppingListDisplayComponent } from './shopping-list-display/shopping-list-display.component'
@@ -59,6 +60,7 @@ const socketIoConfig: SocketIoConfig = {
     MatListModule,
     MatIconModule,
     MatCardModule,
+    MatAutocompleteModule,
     SocketIoModule.forRoot(socketIoConfig)
   ],
   providers: [],

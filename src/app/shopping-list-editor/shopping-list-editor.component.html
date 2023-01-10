@@ -6,7 +6,12 @@
           <input matInput type="number" [formControl]="itemGroup.controls.quantity" attr.aria-label="Item {{i + 1}} quantity">
         </mat-form-field>
         <mat-form-field appearance="fill" class="list-text">
-          <input matInput type="text" [formControl]="itemGroup.controls.text" attr.aria-label="Item {{i + 1}} text">
+          <input matInput 
+          type="text" 
+          [formControl]="itemGroup.controls.text" 
+          [matAutocomplete]="auto" 
+          (focus)="clearAutocomplete()"
+          attr.aria-label="Item {{i + 1}} text">
         </mat-form-field>
       </mat-list-item>
     </ng-container>
@@ -17,3 +22,9 @@
     </button>
   </mat-list-item>
 </mat-list>
+
+<mat-autocomplete #auto="matAutocomplete">
+  <mat-option *ngFor="let autocompleteItem of autocompleteItems" [value]="autocompleteItem">
+    {{ autocompleteItem }}
+  </mat-option>
+</mat-autocomplete>
