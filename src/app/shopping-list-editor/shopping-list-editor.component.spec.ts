@@ -3,7 +3,7 @@ import { ShoppingListEditorComponent } from './shopping-list-editor.component'
 import { AppModule } from '../app.module'
 import { ActivatedRoute, convertToParamMap } from '@angular/router'
 import { Observable, of, Subject } from 'rxjs'
-import { render } from '@testing-library/angular'
+import { render, screen } from '@testing-library/angular'
 import { ReactiveFormsModule } from '@angular/forms'
 import { MatListModule } from '@angular/material/list'
 import { MatInputModule } from '@angular/material/input'
@@ -14,6 +14,8 @@ import { MatButtonModule } from '@angular/material/button'
 import { waitFor } from '@testing-library/dom'
 import { ShoppingListRESTService } from '../shopping-list-rest.service'
 import { mock } from 'jest-mock-extended'
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
+import { ItemServiceService } from '../item-service.service'
 
 describe('ShoppingListEditorComponent', () => {
   it('gets the list ID from a route on creation', async () => {
@@ -66,6 +68,7 @@ describe('ShoppingListEditorComponent', () => {
       .keep(ReactiveFormsModule)
       .keep(MatListModule)
       .keep(MatInputModule)
+      .keep(MatAutocompleteModule)
       .provide({
         provide: ActivatedRoute,
         useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
@@ -98,6 +101,7 @@ describe('ShoppingListEditorComponent', () => {
       .keep(ReactiveFormsModule)
       .keep(MatListModule)
       .keep(MatInputModule)
+      .keep(MatAutocompleteModule)
       .provide({
         provide: ActivatedRoute,
         useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
@@ -147,7 +151,7 @@ describe('ShoppingListEditorComponent', () => {
     expect(await findByLabelText('Item 2 text')).toBeInTheDocument()
   })
 
-  it('sends an update to the service observer when a change is made', async () => {
+  it('sends an update to the socket service observer when a change is made', async () => {
     const user = userEvent.setup()
     const expectedListId = 'list'
     const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
@@ -156,6 +160,7 @@ describe('ShoppingListEditorComponent', () => {
       .keep(MatInputModule)
       .keep(MatIconModule)
       .keep(MatButtonModule)
+      .keep(MatAutocompleteModule)
       .provide({
         provide: ActivatedRoute,
         useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
@@ -166,6 +171,7 @@ describe('ShoppingListEditorComponent', () => {
     const fakeCanonicalObserver = new Subject<IShoppingListItem[]>()
     const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeCanonicalObserver)
     MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ItemServiceService, 'findByName', jest.fn().mockReturnValue(new Observable()))
     MockInstance(ShoppingListSocketService, 'registerChangeObservers', mockRegisterChangeObservers)
 
     const { fixture, findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
@@ -176,7 +182,7 @@ describe('ShoppingListEditorComponent', () => {
     await waitFor(() => expect(changes).toContainEqual({ _id: '', text: expectedChanges, quantity: 1 }))
   })
 
-  it('sends an update to the service observer when a change is made to an exsiting item', async () => {
+  it('sends an update to the socket service observer when a change is made to an exsiting item', async () => {
     const user = userEvent.setup()
     const expectedListId = 'list'
     const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
@@ -185,6 +191,7 @@ describe('ShoppingListEditorComponent', () => {
       .keep(MatInputModule)
       .keep(MatIconModule)
       .keep(MatButtonModule)
+      .keep(MatAutocompleteModule)
       .provide({
         provide: ActivatedRoute,
         useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
@@ -194,6 +201,7 @@ describe('ShoppingListEditorComponent', () => {
     const fakeCanonicalObserver = new Subject<IShoppingListItem[]>()
     const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeCanonicalObserver)
     MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ItemServiceService, 'findByName', jest.fn().mockReturnValue(new Observable()))
     MockInstance(ShoppingListSocketService, 'registerChangeObservers', mockRegisterChangeObservers)
 
     const { fixture, findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
@@ -206,5 +214,130 @@ describe('ShoppingListEditorComponent', () => {
     await waitFor(() => expect(changes[0].text).toEqual(expectedChanges))
     await user.type(textInput, expectedChanges2)
     await waitFor(() => expect(changes[0].text).toEqual(expectedChanges + expectedChanges2))
+  })
+
+  it('sends the value of a text control to the item service on type', async () => {
+    const user = userEvent.setup()
+    const expectedListId = 'list'
+    const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatListModule)
+      .keep(MatInputModule)
+      .keep(MatIconModule)
+      .keep(MatButtonModule)
+      .keep(MatAutocompleteModule)
+      .provide({
+        provide: ActivatedRoute,
+        useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
+      })
+      .build()
+    const mockFindByName = jest.fn().mockReturnValue(new Observable())
+    MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ItemServiceService, 'findByName', mockFindByName)
+    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue(new Observable()))
+
+    const { findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
+
+    const expectedChanges = 'item'
+    const expectedChanges2 = 'extended'
+    const characters = expectedChanges.length + expectedChanges2.length
+    const textInput = await findByLabelText('Item 1 text')
+    await user.type(textInput, expectedChanges)
+    await user.type(textInput, expectedChanges2)
+    await waitFor(() => expect(mockFindByName).toHaveBeenCalledTimes(characters))
+    expect(mockFindByName).toHaveBeenNthCalledWith(expectedChanges.length, expectedChanges)
+    expect(mockFindByName).toHaveBeenNthCalledWith(characters, expectedChanges + expectedChanges2)
+  })
+
+  it('displays autocomplete results under text control to the item service on type', async () => {
+    const user = userEvent.setup()
+    const expectedListId = 'list'
+    const expectedAutocompleteResult = 'autocomplete'
+    const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatListModule)
+      .keep(MatInputModule)
+      .keep(MatIconModule)
+      .keep(MatButtonModule)
+      .keep(MatAutocompleteModule)
+      .provide({
+        provide: ActivatedRoute,
+        useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
+      })
+      .build()
+    MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ItemServiceService, 'findByName', () => of<string[]>([expectedAutocompleteResult]))
+    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue(new Observable()))
+
+    const { findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
+
+    const textInput = await findByLabelText('Item 1 text')
+    await user.type(textInput, 'item')
+
+    const autocompleteOption = await screen.findByRole('option', { name: expectedAutocompleteResult })
+    expect(autocompleteOption).toHaveTextContent(expectedAutocompleteResult)
+  })
+
+  it('replaces value of the text control with autocomplete value when clicked', async () => {
+    const user = userEvent.setup()
+    const expectedListId = 'list'
+    const expectedAutocompleteResult = 'autocomplete'
+    const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatListModule)
+      .keep(MatInputModule)
+      .keep(MatIconModule)
+      .keep(MatButtonModule)
+      .keep(MatAutocompleteModule)
+      .provide({
+        provide: ActivatedRoute,
+        useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
+      })
+      .build()
+    MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ItemServiceService, 'findByName', () => of<string[]>([expectedAutocompleteResult]))
+    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue(new Observable()))
+
+    const { findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
+
+    const expectedChanges = 'item'
+    const textInput = await findByLabelText('Item 1 text')
+    await user.type(textInput, expectedChanges)
+
+    const autocompleteOption = await screen.findByRole('option', { name: expectedAutocompleteResult })
+    await user.click(autocompleteOption)
+    expect(autocompleteOption).not.toBeInTheDocument()
+    expect(textInput).toHaveValue(expectedAutocompleteResult)
+  })
+
+  it('hides autocomplete when control is unfocused', async () => {
+    const user = userEvent.setup()
+    const expectedListId = 'list'
+    const expectedAutocompleteResult = 'autocomplete'
+    const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatListModule)
+      .keep(MatInputModule)
+      .keep(MatIconModule)
+      .keep(MatButtonModule)
+      .keep(MatAutocompleteModule)
+      .provide({
+        provide: ActivatedRoute,
+        useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
+      })
+      .build()
+    MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ItemServiceService, 'findByName', () => of<string[]>([expectedAutocompleteResult]))
+    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue(new Observable()))
+
+    const { findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
+
+    const expectedChanges = 'item'
+    const textInput = await findByLabelText('Item 1 text')
+    await user.type(textInput, expectedChanges)
+
+    const autocompleteOption = await screen.findByRole('option', { name: expectedAutocompleteResult })
+    await user.click(document.body)
+    expect(autocompleteOption).not.toBeInTheDocument()
   })
 })
