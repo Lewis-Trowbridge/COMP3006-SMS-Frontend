@@ -14,6 +14,8 @@ import { MatButtonModule } from '@angular/material/button'
 import { waitFor } from '@testing-library/dom'
 import { ShoppingListRESTService } from '../shopping-list-rest.service'
 import { mock } from 'jest-mock-extended'
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
+import { ItemServiceService } from '../item-service.service'
 
 describe('ShoppingListEditorComponent', () => {
   it('gets the list ID from a route on creation', async () => {
@@ -66,6 +68,7 @@ describe('ShoppingListEditorComponent', () => {
       .keep(ReactiveFormsModule)
       .keep(MatListModule)
       .keep(MatInputModule)
+      .keep(MatAutocompleteModule)
       .provide({
         provide: ActivatedRoute,
         useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
@@ -98,6 +101,7 @@ describe('ShoppingListEditorComponent', () => {
       .keep(ReactiveFormsModule)
       .keep(MatListModule)
       .keep(MatInputModule)
+      .keep(MatAutocompleteModule)
       .provide({
         provide: ActivatedRoute,
         useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
@@ -147,7 +151,7 @@ describe('ShoppingListEditorComponent', () => {
     expect(await findByLabelText('Item 2 text')).toBeInTheDocument()
   })
 
-  it('sends an update to the service observer when a change is made', async () => {
+  it('sends an update to the socket service observer when a change is made', async () => {
     const user = userEvent.setup()
     const expectedListId = 'list'
     const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
@@ -156,6 +160,7 @@ describe('ShoppingListEditorComponent', () => {
       .keep(MatInputModule)
       .keep(MatIconModule)
       .keep(MatButtonModule)
+      .keep(MatAutocompleteModule)
       .provide({
         provide: ActivatedRoute,
         useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
@@ -166,6 +171,7 @@ describe('ShoppingListEditorComponent', () => {
     const fakeCanonicalObserver = new Subject<IShoppingListItem[]>()
     const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeCanonicalObserver)
     MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ItemServiceService, 'findByName', jest.fn().mockReturnValue(new Observable()))
     MockInstance(ShoppingListSocketService, 'registerChangeObservers', mockRegisterChangeObservers)
 
     const { fixture, findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
@@ -176,7 +182,7 @@ describe('ShoppingListEditorComponent', () => {
     await waitFor(() => expect(changes).toContainEqual({ _id: '', text: expectedChanges, quantity: 1 }))
   })
 
-  it('sends an update to the service observer when a change is made to an exsiting item', async () => {
+  it('sends an update to the socket service observer when a change is made to an exsiting item', async () => {
     const user = userEvent.setup()
     const expectedListId = 'list'
     const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
@@ -185,6 +191,7 @@ describe('ShoppingListEditorComponent', () => {
       .keep(MatInputModule)
       .keep(MatIconModule)
       .keep(MatButtonModule)
+      .keep(MatAutocompleteModule)
       .provide({
         provide: ActivatedRoute,
         useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
@@ -194,6 +201,7 @@ describe('ShoppingListEditorComponent', () => {
     const fakeCanonicalObserver = new Subject<IShoppingListItem[]>()
     const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeCanonicalObserver)
     MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ItemServiceService, 'findByName', jest.fn().mockReturnValue(new Observable()))
     MockInstance(ShoppingListSocketService, 'registerChangeObservers', mockRegisterChangeObservers)
 
     const { fixture, findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
