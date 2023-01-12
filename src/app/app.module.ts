@@ -12,7 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { MatButtonModule } from '@angular/material/button'
 import { MatGridListModule } from '@angular/material/grid-list'
-import { HttpClientModule } from '@angular/common/http'
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatToolbarModule } from '@angular/material/toolbar'
@@ -24,8 +24,11 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io'
 import { environment } from '../environments/environment'
 import { ShoppingListDisplayComponent } from './shopping-list-display/shopping-list-display.component'
+import { LoginFormComponent } from './login-form/login-form.component'
+import { CookieInterceptor } from './cookie.interceptor'
 
 const routes: Routes = [
+  { path: 'login', component: LoginFormComponent },
   { path: 'item/create', component: ItemFormComponent },
   { path: 'lists', component: ShoppingListDisplayComponent },
   { path: 'lists/edit/:listId', component: ShoppingListEditorComponent }
@@ -41,7 +44,8 @@ const socketIoConfig: SocketIoConfig = {
     BarcodeReaderComponent,
     ItemFormComponent,
     ShoppingListEditorComponent,
-    ShoppingListDisplayComponent
+    ShoppingListDisplayComponent,
+    LoginFormComponent
   ],
   imports: [
     BrowserModule,
@@ -63,7 +67,11 @@ const socketIoConfig: SocketIoConfig = {
     MatAutocompleteModule,
     SocketIoModule.forRoot(socketIoConfig)
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: CookieInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
