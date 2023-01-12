@@ -29,4 +29,8 @@ export class UserService {
         })
       )
   }
+
+  search (name: string): Observable<string[]> {
+    return this.httpClient.get<string[]>(`${environment.BACKEND_URL}/users/search`, { params: { name } })
+  }
 }
