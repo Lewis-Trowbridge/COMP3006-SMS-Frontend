@@ -1,5 +1,7 @@
 import { Component } from '@angular/core'
-import { FormControl, FormGroup } from '@angular/forms'
+import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { Router } from '@angular/router'
+import { SESSION_KEYS } from '../constants'
 import { UserService } from '../user.service'
 
 @Component({
@@ -9,17 +11,27 @@ import { UserService } from '../user.service'
 })
 export class LoginFormComponent {
   formGroup = new FormGroup({
-    username: new FormControl<string>('', { nonNullable: true }),
-    password: new FormControl<string>('', { nonNullable: true })
+    username: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
+    password: new FormControl<string>('', { validators: [Validators.required], nonNullable: true })
   })
 
-  constructor (private readonly userService: UserService) { }
+  displayLoginError = false
+
+  constructor (private readonly userService: UserService,
+    private readonly router: Router) { }
 
   attemptLogin (): void {
     if (this.formGroup.valid) {
       this.userService.login(this.formGroup.controls.username.value,
         this.formGroup.controls.password.value)
-        .subscribe(value => console.log(value))
+        .subscribe(success => {
+          if (success) {
+            sessionStorage.setItem(SESSION_KEYS.LOGGED_IN, success.toString())
+            void this.router.navigate(['/'])
+          } else {
+            this.displayLoginError = true
+          }
+        })
     }
   }
 }

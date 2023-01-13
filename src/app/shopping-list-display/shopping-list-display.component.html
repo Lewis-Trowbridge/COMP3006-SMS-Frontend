@@ -4,7 +4,7 @@
 </div>
 <div class="list">
     <ng-container *ngIf="lists.length > 0; else noLists">
-        <div *ngFor="let list of lists" class="card">
+        <div *ngFor="let list of lists" class="list-item">
             <mat-card>
                 <mat-card-header>
                     <mat-card-title>{{ list.ownerId }}'s list</mat-card-title>
