@@ -60,4 +60,27 @@ describe('UserService', () => {
       httpTestingController.verify()
     })
   })
+
+  describe('search', () => {
+    it('returns data from backend', (done) => {
+      const expectedUsername = 'user'
+      const expectedResponse = ['searchUser']
+      const response = service.search(expectedUsername)
+      response.subscribe(data => {
+        expect(data).toEqual(expectedResponse)
+        done()
+      })
+
+      const req = httpTestingController.expectOne({
+        url: `${environment.BACKEND_URL}/users/search?name=${expectedUsername}`,
+        method: 'GET'
+      })
+
+      req.flush(expectedResponse)
+
+      expect(req.request.params.get('name')).toEqual(expectedUsername)
+
+      httpTestingController.verify()
+    })
+  })
 })

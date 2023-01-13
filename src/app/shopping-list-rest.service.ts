@@ -20,7 +20,7 @@ export class ShoppingListRESTService {
 
   addEditor (listId: string, username: string): Observable<string | null> {
     return this.httpClient.patch<null>(`${environment.BACKEND_URL}/lists/add-editor`, { listId, userId: username })
-      .pipe(catchError((error: HttpErrorResponse) => of(error.message)))
+      .pipe(catchError((error: HttpErrorResponse) => of(error.statusText)))
   }
 
   listAll (): Observable<IShoppingList[]> {

@@ -78,6 +78,50 @@ describe('ShoppingListRESTService', () => {
     })
   })
 
+  describe('addEditor', () => {
+    it('should return null when request is successful', (done) => {
+      const listId = 'list'
+      const username = 'name'
+      const response = service.addEditor(listId, username)
+      response.subscribe(data => {
+        expect(data).toEqual(null)
+        done()
+      })
+
+      const req = httpTestingController.expectOne({
+        url: `${environment.BACKEND_URL}/lists/add-editor`,
+        method: 'PATCH'
+      })
+
+      req.flush(null)
+
+      expect(req.request.body).toEqual({
+        listId,
+        userId: username
+      })
+
+      httpTestingController.verify()
+    })
+
+    it('should return string message when request is unsuccessful', (done) => {
+      const expectedErrorMessage = 'error message'
+      const response = service.addEditor('list', 'user')
+      response.subscribe(data => {
+        expect(data).toEqual(expectedErrorMessage)
+        done()
+      })
+
+      const req = httpTestingController.expectOne({
+        url: `${environment.BACKEND_URL}/lists/add-editor`,
+        method: 'PATCH'
+      })
+
+      req.flush(null, { status: 404, statusText: expectedErrorMessage })
+
+      httpTestingController.verify()
+    })
+  })
+
   describe('listAll', () => {
     it('should make a request to the backend with the given data', (done) => {
       const testList: IShoppingList = {
