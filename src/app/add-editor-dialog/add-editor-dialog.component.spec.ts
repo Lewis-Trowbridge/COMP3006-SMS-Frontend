@@ -43,4 +43,56 @@ describe('AddEditorDialogComponent', () => {
     await waitFor(() => expect(mockAddEditor).toHaveBeenCalledTimes(1))
     expect(mockAddEditor).toHaveBeenNthCalledWith(1, expectedData.listId, expectedUsername)
   })
+
+  it('should close the dialog if no error is returned', async () => {
+    const user = userEvent.setup()
+    const mockClose = jest.fn()
+    const moduleMetadata = MockBuilder(AddEditorDialogComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatDialogModule)
+      .keep(MatFormFieldModule)
+      .keep(MatInputModule)
+      .keep(MatAutocompleteModule)
+      .provide({ provide: MatDialogRef, useValue: { close: mockClose } })
+      .provide({ provide: MAT_DIALOG_DATA, useValue: { listId: 'list' } })
+      .build()
+    MockInstance(ShoppingListRESTService, 'addEditor', jest.fn().mockReturnValue(of<string | null>(null)))
+    MockInstance(UserService, 'search', () => of<string[]>([]))
+
+    const { findByLabelText, findByRole } = await render(AddEditorDialogComponent, moduleMetadata)
+
+    const searchInput = await findByLabelText('Search')
+    await user.type(searchInput, 'user')
+
+    const submitButton = await findByRole('button', { name: 'Add editor' })
+    await user.click(submitButton)
+
+    await waitFor(() => expect(mockClose).toHaveBeenCalled())
+  })
+
+  it('should display the error message if an error message is returned', async () => {
+    const user = userEvent.setup()
+    const moduleMetadata = MockBuilder(AddEditorDialogComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatDialogModule)
+      .keep(MatFormFieldModule)
+      .keep(MatInputModule)
+      .keep(MatAutocompleteModule)
+      .provide({ provide: MatDialogRef, useValue: {} })
+      .provide({ provide: MAT_DIALOG_DATA, useValue: { listId: 'list' } })
+      .build()
+    const expectedErrorMessage = 'very bad error'
+    MockInstance(ShoppingListRESTService, 'addEditor', jest.fn().mockReturnValue(of<string | null>(expectedErrorMessage)))
+    MockInstance(UserService, 'search', () => of<string[]>([]))
+
+    const { findByLabelText, findByRole, findByText } = await render(AddEditorDialogComponent, moduleMetadata)
+
+    const searchInput = await findByLabelText('Search')
+    await user.type(searchInput, 'user')
+
+    const submitButton = await findByRole('button', { name: 'Add editor' })
+    await user.click(submitButton)
+
+    expect(await findByText(expectedErrorMessage)).toBeInTheDocument()
+  })
 })
