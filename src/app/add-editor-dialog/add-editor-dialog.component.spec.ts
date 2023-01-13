@@ -1,9 +1,10 @@
 import { ReactiveFormsModule } from '@angular/forms'
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
+import { MatOptionModule } from '@angular/material/core'
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
-import { render, waitFor } from '@testing-library/angular'
+import { render, screen, waitFor } from '@testing-library/angular'
 import userEvent from '@testing-library/user-event'
 import { MockBuilder, MockInstance } from 'ng-mocks'
 import { of } from 'rxjs'
@@ -94,5 +95,57 @@ describe('AddEditorDialogComponent', () => {
     await user.click(submitButton)
 
     expect(await findByText(expectedErrorMessage)).toBeInTheDocument()
+  })
+
+  it('should call search with search content on type', async () => {
+    const user = userEvent.setup()
+    const moduleMetadata = MockBuilder(AddEditorDialogComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatDialogModule)
+      .keep(MatFormFieldModule)
+      .keep(MatInputModule)
+      .keep(MatAutocompleteModule)
+      .keep(MatOptionModule)
+      .provide({ provide: MatDialogRef, useValue: {} })
+      .provide({ provide: MAT_DIALOG_DATA, useValue: { listId: 'list' } })
+      .build()
+    const mockSearch = jest.fn().mockReturnValue(of<string[]>([]))
+    MockInstance(ShoppingListRESTService, 'addEditor', () => of<string | null>(null))
+    MockInstance(UserService, 'search', mockSearch)
+
+    const { findByLabelText } = await render(AddEditorDialogComponent, moduleMetadata)
+
+    const expectedTypedUsername = 'user'
+    const searchInput = await findByLabelText('Search')
+    await user.type(searchInput, expectedTypedUsername)
+
+    await waitFor(() => expect(mockSearch).toHaveBeenCalledTimes(expectedTypedUsername.length))
+    expect(mockSearch).toHaveBeenNthCalledWith(expectedTypedUsername.length, expectedTypedUsername)
+  })
+
+  it('should display results from user search in autocomplete', async () => {
+    const user = userEvent.setup()
+    const moduleMetadata = MockBuilder(AddEditorDialogComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatDialogModule)
+      .keep(MatFormFieldModule)
+      .keep(MatInputModule)
+      .keep(MatAutocompleteModule)
+      .keep(MatOptionModule)
+      .provide({ provide: MatDialogRef, useValue: {} })
+      .provide({ provide: MAT_DIALOG_DATA, useValue: { listId: 'list' } })
+      .build()
+    const expectedUsernames = ['user', 'user 2']
+    const mockSearch = jest.fn().mockReturnValue(of<string[]>(expectedUsernames))
+    MockInstance(ShoppingListRESTService, 'addEditor', () => of<string | null>(null))
+    MockInstance(UserService, 'search', mockSearch)
+
+    const { findByLabelText } = await render(AddEditorDialogComponent, moduleMetadata)
+
+    const searchInput = await findByLabelText('Search')
+    await user.type(searchInput, 'user')
+
+    expect(await screen.findByRole('option', { name: expectedUsernames[0] })).toBeInTheDocument()
+    expect(await screen.findByRole('option', { name: expectedUsernames[1] })).toBeInTheDocument()
   })
 })
