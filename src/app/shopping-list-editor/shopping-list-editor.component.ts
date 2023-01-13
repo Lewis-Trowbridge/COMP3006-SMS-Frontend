@@ -5,6 +5,8 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms'
 import { Observable } from 'rxjs'
 import { ShoppingListRESTService } from '../shopping-list-rest.service'
 import { ItemServiceService } from '../item-service.service'
+import { MatDialog } from '@angular/material/dialog'
+import { AddEditorDialogComponent } from '../add-editor-dialog/add-editor-dialog.component'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const ObjectID = require('bson-objectid')
 
@@ -37,7 +39,8 @@ export class ShoppingListEditorComponent implements OnInit {
   constructor (private readonly routeInfo: ActivatedRoute,
     private readonly shoppingListRestService: ShoppingListRESTService,
     private readonly shoppingListSocketService: ShoppingListSocketService,
-    private readonly itemService: ItemServiceService) { }
+    private readonly itemService: ItemServiceService,
+    private readonly dialog: MatDialog) { }
 
   ngOnInit (): void {
     this.routeInfo.paramMap.subscribe(params => {
@@ -54,6 +57,10 @@ export class ShoppingListEditorComponent implements OnInit {
   addItem (): void {
     const form = this.constructFormGroup(ObjectID())
     this.items.push(form)
+  }
+
+  openEditorDialog (): void {
+    this.dialog.open(AddEditorDialogComponent, { data: { listId: this.listId } })
   }
 
   clearAutocomplete (): void {
