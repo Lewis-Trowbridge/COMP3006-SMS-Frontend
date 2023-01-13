@@ -26,6 +26,7 @@ import { environment } from '../environments/environment'
 import { ShoppingListDisplayComponent } from './shopping-list-display/shopping-list-display.component'
 import { LoginFormComponent } from './login-form/login-form.component'
 import { CookieInterceptor } from './cookie.interceptor'
+import { AddEditorDialogComponent } from './add-editor-dialog/add-editor-dialog.component'
 
 const routes: Routes = [
   { path: 'login', component: LoginFormComponent },
@@ -45,6 +46,7 @@ const socketIoConfig: SocketIoConfig = {
     ItemFormComponent,
     ShoppingListEditorComponent,
     ShoppingListDisplayComponent,
+    AddEditorDialogComponent,
     LoginFormComponent
   ],
   imports: [

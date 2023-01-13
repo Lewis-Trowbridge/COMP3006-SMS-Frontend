@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpErrorResponse } from '@angular/common/http'
 import { Injectable } from '@angular/core'
-import { map, Observable } from 'rxjs'
+import { catchError, map, Observable, of } from 'rxjs'
 import { environment } from '../environments/environment'
 import { IShoppingList } from './shopping-list-socket.service'
 
@@ -16,6 +16,11 @@ export class ShoppingListRESTService {
 
   create (): Observable<IShoppingList> {
     return this.httpClient.post<IShoppingList>(`${environment.BACKEND_URL}/lists/create`, {})
+  }
+
+  addEditor (listId: string, username: string): Observable<string | null> {
+    return this.httpClient.patch<null>(`${environment.BACKEND_URL}/lists/add-editor`, { listId, userId: username })
+      .pipe(catchError((error: HttpErrorResponse) => of(error.message)))
   }
 
   listAll (): Observable<IShoppingList[]> {

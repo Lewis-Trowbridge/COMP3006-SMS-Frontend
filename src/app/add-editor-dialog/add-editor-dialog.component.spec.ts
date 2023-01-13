@@ -1,23 +1,46 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing'
-
-import { AddEditorDialogComponent } from './add-editor-dialog.component'
+import { ReactiveFormsModule } from '@angular/forms'
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatInputModule } from '@angular/material/input'
+import { render, waitFor } from '@testing-library/angular'
+import userEvent from '@testing-library/user-event'
+import { MockBuilder, MockInstance } from 'ng-mocks'
+import { of } from 'rxjs'
+import { AppModule } from '../app.module'
+import { ShoppingListRESTService } from '../shopping-list-rest.service'
+import { UserService } from '../user.service'
+import { AddEditorDialogComponent, AddEditorDialogData } from './add-editor-dialog.component'
 
 describe('AddEditorDialogComponent', () => {
-  let component: AddEditorDialogComponent
-  let fixture: ComponentFixture<AddEditorDialogComponent>
+  it('should send the username and given list ID to shopping list service', async () => {
+    const user = userEvent.setup()
+    const expectedData: AddEditorDialogData = {
+      listId: 'list'
+    }
+    const expectedUsername = 'user'
+    const moduleMetadata = MockBuilder(AddEditorDialogComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatDialogModule)
+      .keep(MatFormFieldModule)
+      .keep(MatInputModule)
+      .keep(MatAutocompleteModule)
+      .provide({ provide: MatDialogRef, useValue: {} })
+      .provide({ provide: MAT_DIALOG_DATA, useValue: expectedData })
+      .build()
+    const mockAddEditor = jest.fn().mockReturnValue(of<string | null>(null))
+    MockInstance(ShoppingListRESTService, 'addEditor', mockAddEditor)
+    MockInstance(UserService, 'search', () => of<string[]>([]))
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [AddEditorDialogComponent]
-    })
-      .compileComponents()
+    const { findByLabelText, findByRole } = await render(AddEditorDialogComponent, moduleMetadata)
 
-    fixture = TestBed.createComponent(AddEditorDialogComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
-  })
+    const searchInput = await findByLabelText('Search')
+    await user.type(searchInput, expectedUsername)
 
-  it('should create', () => {
-    expect(component).toBeTruthy()
+    const submitButton = await findByRole('button', { name: 'Add editor' })
+    await user.click(submitButton)
+
+    await waitFor(() => expect(mockAddEditor).toHaveBeenCalledTimes(1))
+    expect(mockAddEditor).toHaveBeenNthCalledWith(1, expectedData.listId, expectedUsername)
   })
 })
