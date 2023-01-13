@@ -3,6 +3,7 @@
     <span class="spacer"></span>
     <a [routerLink]="['/']" class="toolbar-link">Home</a>
     <a *ngIf="loggedIn === null" [routerLink]="['/login']" class="toolbar-link">Login</a>
+    <a *ngIf="loggedIn === null" [routerLink]="['/create']" class="toolbar-link">Create</a>
     <a *ngIf="loggedIn === UserType.Customer" [routerLink]="['lists/']" class="toolbar-link">Shopping lists</a>
 </mat-toolbar>
 <div class="container">

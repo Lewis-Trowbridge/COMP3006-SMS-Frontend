@@ -8,7 +8,7 @@ export enum UserType {
   Staff
 }
 
-interface LoginResponse {
+interface UserTypeResponse {
   type: UserType
 }
 
@@ -18,8 +18,20 @@ interface LoginResponse {
 export class UserService {
   constructor (private readonly httpClient: HttpClient) { }
 
+  create (username: string, password: string): Observable<UserType | undefined> {
+    return this.httpClient.post<UserTypeResponse>(`${environment.BACKEND_URL}/users/create`, { username, password })
+      .pipe(
+        catchError(() => {
+          return of(undefined)
+        }),
+        map((value) => {
+          return value?.type
+        })
+      )
+  }
+
   login (username: string, password: string): Observable<UserType | undefined> {
-    return this.httpClient.post<LoginResponse>(`${environment.BACKEND_URL}/users/login`, { username, password })
+    return this.httpClient.post<UserTypeResponse>(`${environment.BACKEND_URL}/users/login`, { username, password })
       .pipe(
         catchError(() => {
           return of(undefined)

@@ -27,9 +27,11 @@ import { ShoppingListDisplayComponent } from './shopping-list-display/shopping-l
 import { LoginFormComponent } from './login-form/login-form.component'
 import { CookieInterceptor } from './cookie.interceptor'
 import { AddEditorDialogComponent } from './add-editor-dialog/add-editor-dialog.component'
+import { CreateUserFormComponent } from './create-user-form/create-user-form.component'
 
 const routes: Routes = [
   { path: 'login', component: LoginFormComponent },
+  { path: 'create', component: CreateUserFormComponent },
   { path: 'item/create', component: ItemFormComponent },
   { path: 'lists', component: ShoppingListDisplayComponent },
   { path: 'lists/edit/:listId', component: ShoppingListEditorComponent }
@@ -47,7 +49,8 @@ const socketIoConfig: SocketIoConfig = {
     ShoppingListEditorComponent,
     ShoppingListDisplayComponent,
     AddEditorDialogComponent,
-    LoginFormComponent
+    LoginFormComponent,
+    CreateUserFormComponent
   ],
   imports: [
     BrowserModule,
