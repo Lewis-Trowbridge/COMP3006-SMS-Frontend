@@ -3,7 +3,7 @@ import { render, waitFor } from '@testing-library/angular'
 import { MockBuilder, MockInstance } from 'ng-mocks'
 import { of } from 'rxjs'
 import { AppModule } from '../app.module'
-import { UserService } from '../user.service'
+import { UserService, UserType } from '../user.service'
 import userEvent from '@testing-library/user-event'
 
 import { LoginFormComponent } from './login-form.component'
@@ -18,7 +18,7 @@ describe('LoginFormComponent', () => {
       .keep(MatFormFieldModule)
       .keep(MatInputModule)
       .build()
-    const mockLogin = jest.fn().mockReturnValue(of<boolean>(true))
+    const mockLogin = jest.fn().mockReturnValue(of<UserType | undefined>(UserType.Customer))
     MockInstance(UserService, 'login', mockLogin)
 
     const expectedUsername = 'username'
@@ -39,14 +39,14 @@ describe('LoginFormComponent', () => {
     expect(mockLogin).toHaveBeenNthCalledWith(1, expectedUsername, expectedPassword)
   })
 
-  it('displays an error when service returns false', async () => {
+  it('displays an error when service returns undefined', async () => {
     const user = userEvent.setup()
     const moduleMetadata = MockBuilder(LoginFormComponent, AppModule)
       .keep(ReactiveFormsModule)
       .keep(MatFormFieldModule)
       .keep(MatInputModule)
       .build()
-    const mockLogin = jest.fn().mockReturnValue(of<boolean>(false))
+    const mockLogin = jest.fn().mockReturnValue(of<UserType | undefined>(undefined))
     MockInstance(UserService, 'login', mockLogin)
 
     const expectedUsername = 'username'

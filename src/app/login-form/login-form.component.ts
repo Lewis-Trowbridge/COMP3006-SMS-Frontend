@@ -25,7 +25,7 @@ export class LoginFormComponent {
       this.userService.login(this.formGroup.controls.username.value,
         this.formGroup.controls.password.value)
         .subscribe(success => {
-          if (success) {
+          if (success !== undefined) {
             sessionStorage.setItem(SESSION_KEYS.LOGGED_IN, success.toString())
             void this.router.navigate(['/'])
           } else {

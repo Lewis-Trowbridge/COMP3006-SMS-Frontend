@@ -3,7 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing'
 import { environment } from '../environments/environment'
 
-import { UserService } from './user.service'
+import { UserService, UserType } from './user.service'
 
 describe('UserService', () => {
   let service: UserService
@@ -23,7 +23,7 @@ describe('UserService', () => {
       const testPassword = 'password'
       const response = service.login(testUsername, testPassword)
       response.subscribe(data => {
-        expect(data).toBe(true)
+        expect(data).toBe(UserType.Customer)
         done()
       })
 
@@ -32,7 +32,7 @@ describe('UserService', () => {
         method: 'POST'
       })
 
-      req.flush(null)
+      req.flush({ type: UserType.Customer })
 
       expect(req.request.body).toEqual({ username: testUsername, password: testPassword })
 
@@ -44,7 +44,7 @@ describe('UserService', () => {
       const testPassword = 'password'
       const response = service.login(testUsername, testPassword)
       response.subscribe(data => {
-        expect(data).toBe(false)
+        expect(data).toBeUndefined()
         done()
       })
 
