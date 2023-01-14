@@ -30,6 +30,7 @@ import { CookieInterceptor } from './cookie.interceptor'
 import { AddEditorDialogComponent } from './add-editor-dialog/add-editor-dialog.component'
 import { CreateUserFormComponent } from './create-user-form/create-user-form.component'
 import { ItemListComponent } from './item-list/item-list.component'
+import { UnauthorisedRedirectInterceptor } from './unauthorised-redirect.interceptor'
 
 const routes: Routes = [
   { path: 'login', component: LoginFormComponent },
@@ -80,6 +81,11 @@ const socketIoConfig: SocketIoConfig = {
   providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: CookieInterceptor,
+    multi: true
+  },
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: UnauthorisedRedirectInterceptor,
     multi: true
   }],
   bootstrap: [AppComponent]
