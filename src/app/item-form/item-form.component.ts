@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { IItem, ItemServiceService } from '../item-service.service'
 import { MatDialog } from '@angular/material/dialog'
 import { BarcodeReaderComponent } from '../barcode-reader/barcode-reader.component'
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'app-item-form',
@@ -20,7 +21,8 @@ export class ItemFormComponent {
   isLoading = false
 
   constructor (private readonly itemService: ItemServiceService,
-    private readonly dialog: MatDialog) { }
+    private readonly dialog: MatDialog,
+    private readonly router: Router) { }
 
   onSubmit (): void {
     if (this.itemGroup.valid) {
@@ -28,6 +30,7 @@ export class ItemFormComponent {
       this.isLoading = true
       result.subscribe(() => {
         this.isLoading = false
+        void this.router.navigate(['/items'])
       })
     }
   }

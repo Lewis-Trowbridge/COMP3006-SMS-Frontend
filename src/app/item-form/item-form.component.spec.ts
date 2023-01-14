@@ -125,6 +125,7 @@ describe('ItemFormComponent', () => {
       .keep(MatProgressSpinnerModule)
       .build()
     const item: IItem = {
+      _id: undefined,
       name: 'name',
       barcode: 'barcode',
       position: 'position',
