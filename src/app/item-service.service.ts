@@ -4,6 +4,7 @@ import { environment } from '../environments/environment'
 import { map, Observable } from 'rxjs'
 
 export interface IItem {
+  _id: string | undefined
   name: string
   barcode: string
   position: string
@@ -22,6 +23,10 @@ export class ItemServiceService {
 
   create (item: IItem): Observable<IItem> {
     return this.httpClient.post<IItem>(`${environment.BACKEND_URL}/items/create`, item)
+  }
+
+  listAll (): Observable<IItem[]> {
+    return this.httpClient.get<IItem[]>(`${environment.BACKEND_URL}/items/list-all`)
   }
 
   findByName (name: string): Observable<string[]> {
