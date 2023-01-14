@@ -23,6 +23,7 @@ describe('ItemServiceService', () => {
   describe('create', () => {
     it('should make a request to the backend with the given data', () => {
       const testItem: IItem = {
+        _id: undefined,
         name: 'name',
         barcode: 'barcode',
         position: 'position',
@@ -37,6 +38,29 @@ describe('ItemServiceService', () => {
       })
 
       expect(req.request.body).toEqual(testItem)
+
+      req.flush(testItem)
+
+      httpTestingController.verify()
+    })
+  })
+
+  describe('listAll', () => {
+    it('should make a request to the backend with the given data', () => {
+      const testItem: IItem[] = [{
+        _id: 'id',
+        name: 'name',
+        barcode: 'barcode',
+        position: 'position',
+        stock: 0
+      }]
+      const response = service.listAll()
+      response.subscribe(data => expect(data).toEqual(testItem))
+
+      const req = httpTestingController.expectOne({
+        url: `${environment.BACKEND_URL}/items/list-all`,
+        method: 'GET'
+      })
 
       req.flush(testItem)
 

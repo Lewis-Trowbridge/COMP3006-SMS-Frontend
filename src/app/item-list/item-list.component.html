@@ -1,0 +1,17 @@
+<div class="list">
+    <div class="list-item">
+        <a mat-button [routerLink]="['create']">New</a>
+    </div>
+    <div class="list-item">
+        <mat-table [dataSource]="items">
+
+            <mat-text-column name="name"></mat-text-column>
+            <mat-text-column name="barcode"></mat-text-column>
+            <mat-text-column name="position"></mat-text-column>
+            <mat-text-column name="stock"></mat-text-column>
+
+            <tr mat-header-row *matHeaderRowDef="display"></tr>
+            <tr mat-row *matRowDef="let myRowData; columns: display"></tr>
+        </mat-table>
+    </div>
+</div>

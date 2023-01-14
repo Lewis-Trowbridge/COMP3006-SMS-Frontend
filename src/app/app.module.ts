@@ -20,6 +20,7 @@ import { ShoppingListEditorComponent } from './shopping-list-editor/shopping-lis
 import { MatListModule } from '@angular/material/list'
 import { MatIconModule } from '@angular/material/icon'
 import { MatCardModule } from '@angular/material/card'
+import { MatTableModule } from '@angular/material/table'
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io'
 import { environment } from '../environments/environment'
@@ -28,11 +29,13 @@ import { LoginFormComponent } from './login-form/login-form.component'
 import { CookieInterceptor } from './cookie.interceptor'
 import { AddEditorDialogComponent } from './add-editor-dialog/add-editor-dialog.component'
 import { CreateUserFormComponent } from './create-user-form/create-user-form.component'
+import { ItemListComponent } from './item-list/item-list.component'
 
 const routes: Routes = [
   { path: 'login', component: LoginFormComponent },
   { path: 'create', component: CreateUserFormComponent },
-  { path: 'item/create', component: ItemFormComponent },
+  { path: 'items', component: ItemListComponent },
+  { path: 'items/create', component: ItemFormComponent },
   { path: 'lists', component: ShoppingListDisplayComponent },
   { path: 'lists/edit/:listId', component: ShoppingListEditorComponent }
 ]
@@ -50,7 +53,8 @@ const socketIoConfig: SocketIoConfig = {
     ShoppingListDisplayComponent,
     AddEditorDialogComponent,
     LoginFormComponent,
-    CreateUserFormComponent
+    CreateUserFormComponent,
+    ItemListComponent
   ],
   imports: [
     BrowserModule,
@@ -70,6 +74,7 @@ const socketIoConfig: SocketIoConfig = {
     MatIconModule,
     MatCardModule,
     MatAutocompleteModule,
+    MatTableModule,
     SocketIoModule.forRoot(socketIoConfig)
   ],
   providers: [{
