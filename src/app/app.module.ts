@@ -32,8 +32,10 @@ import { CreateUserFormComponent } from './create-user-form/create-user-form.com
 import { ItemListComponent } from './item-list/item-list.component'
 import { UnauthorisedRedirectInterceptor } from './unauthorised-redirect.interceptor'
 import { LogoutShimComponent } from './logout-shim/logout-shim.component'
+import { HomepageComponent } from './homepage/homepage.component'
 
 const routes: Routes = [
+  { path: '', component: HomepageComponent },
   { path: 'login', component: LoginFormComponent },
   { path: 'logout', component: LogoutShimComponent },
   { path: 'create', component: CreateUserFormComponent },
@@ -58,7 +60,8 @@ const socketIoConfig: SocketIoConfig = {
     LoginFormComponent,
     CreateUserFormComponent,
     ItemListComponent,
-    LogoutShimComponent
+    LogoutShimComponent,
+    HomepageComponent
   ],
   imports: [
     BrowserModule,
