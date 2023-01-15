@@ -7,7 +7,7 @@ import { render, screen } from '@testing-library/angular'
 import { ReactiveFormsModule } from '@angular/forms'
 import { MatListModule } from '@angular/material/list'
 import { MatInputModule } from '@angular/material/input'
-import { ShoppingListSocketService, IShoppingListItem, IShoppingList } from '../shopping-list-socket.service'
+import { ShoppingListSocketService, IShoppingListItem, IShoppingList, IChangeObservers } from '../shopping-list-socket.service'
 import userEvent from '@testing-library/user-event'
 import { MatIconModule } from '@angular/material/icon'
 import { MatButtonModule } from '@angular/material/button'
@@ -16,6 +16,11 @@ import { ShoppingListRESTService } from '../shopping-list-rest.service'
 import { mock } from 'jest-mock-extended'
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { ItemServiceService } from '../item-service.service'
+
+const fakeObservers: IChangeObservers = {
+  acknowledge: of(),
+  distributeCanonical: of<IShoppingListItem[]>([{ _id: '', text: '', quantity: 1 }])
+}
 
 describe('ShoppingListEditorComponent', () => {
   it('gets the list ID from a route on creation', async () => {
@@ -91,7 +96,7 @@ describe('ShoppingListEditorComponent', () => {
   it('makes a row with elements for each received list item from socket observable', async () => {
     const expectedListId = 'list'
     const fakeCanonicalObserver = new Subject<IShoppingListItem[]>()
-    const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeCanonicalObserver)
+    const mockRegisterChangeObservers = jest.fn().mockReturnValue({ ...fakeObservers, distributeCanonical: fakeCanonicalObserver })
     const expectedItem: IShoppingListItem = {
       _id: 'id',
       text: 'text',
@@ -135,8 +140,7 @@ describe('ShoppingListEditorComponent', () => {
         useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
       })
       .build()
-    const fakeCanonicalObserver = new Subject<IShoppingListItem[]>()
-    const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeCanonicalObserver)
+    const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeObservers)
     MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
     MockInstance(ShoppingListSocketService, 'registerChangeObservers', mockRegisterChangeObservers)
 
@@ -165,8 +169,7 @@ describe('ShoppingListEditorComponent', () => {
         useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
       })
       .build()
-    const fakeCanonicalObserver = new Subject<IShoppingListItem[]>()
-    const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeCanonicalObserver)
+    const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeObservers)
     MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
     MockInstance(ShoppingListSocketService, 'registerChangeObservers', mockRegisterChangeObservers)
 
@@ -199,8 +202,7 @@ describe('ShoppingListEditorComponent', () => {
       .build()
     let changes: IShoppingListItem = { _id: '', text: '', quantity: 0 }
     const expectedChanges = 'item'
-    const fakeCanonicalObserver = new Subject<IShoppingListItem[]>()
-    const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeCanonicalObserver)
+    const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeObservers)
     MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
     MockInstance(ItemServiceService, 'findByName', jest.fn().mockReturnValue(new Observable()))
     MockInstance(ShoppingListSocketService, 'registerChangeObservers', mockRegisterChangeObservers)
@@ -229,8 +231,7 @@ describe('ShoppingListEditorComponent', () => {
       })
       .build()
     let changes: IShoppingListItem[] = [{ _id: '', text: '', quantity: 0 }]
-    const fakeCanonicalObserver = new Subject<IShoppingListItem[]>()
-    const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeCanonicalObserver)
+    const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeObservers)
     MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
     MockInstance(ItemServiceService, 'findByName', jest.fn().mockReturnValue(new Observable()))
     MockInstance(ShoppingListSocketService, 'registerChangeObservers', mockRegisterChangeObservers)
@@ -265,7 +266,7 @@ describe('ShoppingListEditorComponent', () => {
     const mockFindByName = jest.fn().mockReturnValue(new Observable())
     MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
     MockInstance(ItemServiceService, 'findByName', mockFindByName)
-    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue(fakeObservers))
 
     const { findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
 
@@ -298,7 +299,7 @@ describe('ShoppingListEditorComponent', () => {
       .build()
     MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
     MockInstance(ItemServiceService, 'findByName', () => of<string[]>([expectedAutocompleteResult]))
-    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue(fakeObservers))
 
     const { findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
 
@@ -327,7 +328,7 @@ describe('ShoppingListEditorComponent', () => {
       .build()
     MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
     MockInstance(ItemServiceService, 'findByName', () => of<string[]>([expectedAutocompleteResult]))
-    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue(fakeObservers))
 
     const { findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
 
@@ -359,7 +360,7 @@ describe('ShoppingListEditorComponent', () => {
       .build()
     MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
     MockInstance(ItemServiceService, 'findByName', () => of<string[]>([expectedAutocompleteResult]))
-    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue(fakeObservers))
 
     const { findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
 
@@ -370,5 +371,66 @@ describe('ShoppingListEditorComponent', () => {
     const autocompleteOption = await screen.findByRole('option', { name: expectedAutocompleteResult })
     await user.click(document.body)
     expect(autocompleteOption).not.toBeInTheDocument()
+  })
+
+  it('displays saving when change has been made', async () => {
+    const user = userEvent.setup()
+    const expectedListId = 'list'
+    const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatListModule)
+      .keep(MatInputModule)
+      .keep(MatIconModule)
+      .keep(MatButtonModule)
+      .keep(MatAutocompleteModule)
+      .provide({
+        provide: ActivatedRoute,
+        useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
+      })
+      .build()
+
+    MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ItemServiceService, 'findByName', () => of<string[]>([]))
+    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue(fakeObservers))
+
+    const { findByLabelText, findByText } = await render(ShoppingListEditorComponent, moduleMetadata)
+
+    const textInput = await findByLabelText('Item 1 text')
+    await user.type(textInput, 'something')
+
+    expect(await findByText('Saving...')).toBeInTheDocument()
+  })
+
+  it('displays saved when change has been acknowledged', async () => {
+    const user = userEvent.setup()
+    const expectedListId = 'list'
+    const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatListModule)
+      .keep(MatInputModule)
+      .keep(MatIconModule)
+      .keep(MatButtonModule)
+      .keep(MatAutocompleteModule)
+      .provide({
+        provide: ActivatedRoute,
+        useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
+      })
+      .build()
+
+    const fakeAcknowledgeObservable = new Subject<null>()
+    MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ItemServiceService, 'findByName', () => of<string[]>([]))
+    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue({ ...fakeObservers, acknowledge: fakeAcknowledgeObservable }))
+
+    const { findByLabelText, findByText } = await render(ShoppingListEditorComponent, moduleMetadata)
+
+    const textInput = await findByLabelText('Item 1 text')
+    await user.type(textInput, 'something')
+
+    const savingElement = await findByText('Saving...')
+
+    fakeAcknowledgeObservable.next(null)
+    await waitFor(() => expect(savingElement).not.toBeInTheDocument())
+    expect(await findByText('Saved.')).toBeInTheDocument()
   })
 })

@@ -1,4 +1,9 @@
 <button mat-raised-button (click)="openEditorDialog()">Add editor</button>
+<span class="spacer"></span>
+<p *ngIf="saving; else saved">Saving...</p>
+<ng-template #saved>
+  <p>Saved.</p>
+</ng-template>
 <div class="list" [formGroup]="formGroup">
   <ng-container formArrayName="items">
     <ng-container *ngFor="let itemGroup of items.controls; let i = index">
