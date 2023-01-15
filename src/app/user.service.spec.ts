@@ -61,6 +61,25 @@ describe('UserService', () => {
     })
   })
 
+  describe('logout', () => {
+    it('makes request to backend', (done) => {
+      const response = service.logout()
+      response.subscribe(data => {
+        expect(data).toBeNull()
+        done()
+      })
+
+      const req = httpTestingController.expectOne({
+        url: `${environment.BACKEND_URL}/users/logout`,
+        method: 'GET'
+      })
+
+      req.flush(null)
+
+      httpTestingController.verify()
+    })
+  })
+
   describe('search', () => {
     it('returns data from backend', (done) => {
       const expectedUsername = 'user'

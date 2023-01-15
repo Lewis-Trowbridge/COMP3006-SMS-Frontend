@@ -2,10 +2,11 @@
     <span>COMP3006 SMS</span>
     <span class="spacer"></span>
     <a [routerLink]="['/']" class="toolbar-link">Home</a>
-    <a *ngIf="loggedIn === null" [routerLink]="['/login']" class="toolbar-link">Login</a>
-    <a *ngIf="loggedIn === null" [routerLink]="['/create']" class="toolbar-link">Create</a>
-    <a *ngIf="loggedIn === UserType.Customer" [routerLink]="['lists/']" class="toolbar-link">Shopping lists</a>
-    <a *ngIf="loggedIn === UserType.Staff" [routerLink]="['items/']" class="toolbar-link">Items</a>
+    <a *ngIf="loggedIn === null" [routerLink]="['create']" class="toolbar-link">Create</a>
+    <a *ngIf="loggedIn === UserType.Customer" [routerLink]="['lists']" class="toolbar-link">Shopping lists</a>
+    <a *ngIf="loggedIn === UserType.Staff" [routerLink]="['items']" class="toolbar-link">Items</a>
+    <a *ngIf="loggedIn === null" [routerLink]="['login']" class="toolbar-link">Login</a>
+    <a *ngIf="loggedIn !== null" [routerLink]="['logout']" class="toolbar-link">Logout</a>
 </mat-toolbar>
 <div class="container">
     <router-outlet class="content"></router-outlet>
