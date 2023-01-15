@@ -28,8 +28,8 @@ export class ShoppingListEditorComponent implements OnInit {
     ])
   })
 
+  saving = false
   listId = ''
-
   autocompleteItems: string[] = []
 
   get items (): FormArray<FormGroup<IShoppingListItemFormGroup>> {
@@ -47,10 +47,14 @@ export class ShoppingListEditorComponent implements OnInit {
       this.listId = params.get('listId') ?? ''
       this.shoppingListRestService.get(this.listId).subscribe(data => this.displayChanges(data.items))
 
-      this.shoppingListSocketService.registerChangeObservers(
+      const observers = this.shoppingListSocketService.registerChangeObservers(
         this.listId,
         this.items.valueChanges as Observable<IShoppingListItem[]>)
-        .subscribe(canonical => this.displayChanges(canonical))
+
+      observers.distributeCanonical.subscribe(canonical => this.displayChanges(canonical))
+
+      this.items.valueChanges.subscribe(() => { this.saving = true })
+      observers.acknowledge.subscribe(() => { this.saving = false })
     })
   }
 

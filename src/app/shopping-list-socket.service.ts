@@ -17,15 +17,23 @@ export interface IShoppingList {
   items: IShoppingListItem[]
 }
 
+export interface IChangeObservers {
+  acknowledge: Observable<null>
+  distributeCanonical: Observable<IShoppingListItem[]>
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ShoppingListSocketService {
   constructor (private readonly socket: Socket) { }
 
-  registerChangeObservers (listId: string, changes: Observable<IShoppingListItem[]>): Observable<IShoppingListItem[]> {
+  registerChangeObservers (listId: string, changes: Observable<IShoppingListItem[]>): IChangeObservers {
     this.socket.emit('joinListRoom', listId)
     changes.subscribe(change => this.socket.emit('resolveChanges', listId, change))
-    return this.socket.fromEvent<IShoppingListItem[]>('distributeCanonical')
+    return {
+      acknowledge: this.socket.fromEvent<null>('acknowledge'),
+      distributeCanonical: this.socket.fromEvent<IShoppingListItem[]>('distributeCanonical')
+    }
   }
 }
