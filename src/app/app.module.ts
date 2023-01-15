@@ -31,9 +31,11 @@ import { AddEditorDialogComponent } from './add-editor-dialog/add-editor-dialog.
 import { CreateUserFormComponent } from './create-user-form/create-user-form.component'
 import { ItemListComponent } from './item-list/item-list.component'
 import { UnauthorisedRedirectInterceptor } from './unauthorised-redirect.interceptor'
+import { LogoutShimComponent } from './logout-shim/logout-shim.component'
 
 const routes: Routes = [
   { path: 'login', component: LoginFormComponent },
+  { path: 'logout', component: LogoutShimComponent },
   { path: 'create', component: CreateUserFormComponent },
   { path: 'items', component: ItemListComponent },
   { path: 'items/create', component: ItemFormComponent },
@@ -55,7 +57,8 @@ const socketIoConfig: SocketIoConfig = {
     AddEditorDialogComponent,
     LoginFormComponent,
     CreateUserFormComponent,
-    ItemListComponent
+    ItemListComponent,
+    LogoutShimComponent
   ],
   imports: [
     BrowserModule,

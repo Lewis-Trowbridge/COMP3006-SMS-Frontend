@@ -42,6 +42,10 @@ export class UserService {
       )
   }
 
+  logout (): Observable<null> {
+    return this.httpClient.get<null>(`${environment.BACKEND_URL}/users/logout`)
+  }
+
   search (name: string): Observable<string[]> {
     return this.httpClient.get<string[]>(`${environment.BACKEND_URL}/users/search`, { params: { name } })
   }
