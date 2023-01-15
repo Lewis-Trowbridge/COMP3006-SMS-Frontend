@@ -59,6 +59,10 @@ export class ShoppingListEditorComponent implements OnInit {
     this.items.push(form)
   }
 
+  removeItem (index: number): void {
+    this.items.removeAt(index)
+  }
+
   openEditorDialog (): void {
     this.dialog.open(AddEditorDialogComponent, { data: { listId: this.listId } })
   }
