@@ -151,6 +151,37 @@ describe('ShoppingListEditorComponent', () => {
     expect(await findByLabelText('Item 2 text')).toBeInTheDocument()
   })
 
+  it('deletes a row when the delete button is clicked', async () => {
+    const user = userEvent.setup()
+    const expectedListId = 'list'
+    const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatListModule)
+      .keep(MatInputModule)
+      .keep(MatIconModule)
+      .keep(MatButtonModule)
+      .provide({
+        provide: ActivatedRoute,
+        useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
+      })
+      .build()
+    const fakeCanonicalObserver = new Subject<IShoppingListItem[]>()
+    const mockRegisterChangeObservers = jest.fn().mockReturnValue(fakeCanonicalObserver)
+    MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ShoppingListSocketService, 'registerChangeObservers', mockRegisterChangeObservers)
+
+    const { findByRole, findByLabelText } = await render(ShoppingListEditorComponent, moduleMetadata)
+
+    const quantityElement = await findByLabelText('Item 1 quantity')
+    const textElement = await findByLabelText('Item 1 text')
+
+    const deleteButton = await findByRole('button', { name: 'Delete item 1' })
+    await user.click(deleteButton)
+
+    expect(quantityElement).not.toBeInTheDocument()
+    expect(textElement).not.toBeInTheDocument()
+  })
+
   it('sends an update to the socket service observer when a change is made', async () => {
     const user = userEvent.setup()
     const expectedListId = 'list'
