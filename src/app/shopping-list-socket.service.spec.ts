@@ -5,6 +5,15 @@ import { of, Subject } from 'rxjs'
 
 describe('ShoppingListSocketService', () => {
   describe('registerChangeObservers', () => {
+    it('connects to the server', () => {
+      const mockSocket = mock<WrappedSocket>()
+      const service = new ShoppingListSocketService(mockSocket)
+
+      service.registerChangeObservers('', of<IShoppingListItem[]>([]))
+
+      expect(mockSocket.connect).toHaveBeenCalled()
+    })
+
     it('emits socketIO joinListRoom with list room', () => {
       const mockSocket = mock<WrappedSocket>()
       const service = new ShoppingListSocketService(mockSocket)
@@ -49,6 +58,15 @@ describe('ShoppingListSocketService', () => {
       const actual = service.registerChangeObservers(expectedListId, of<IShoppingListItem[]>([]))
 
       expect(actual).toEqual(expected)
+    })
+
+    it('closes the connection', () => {
+      const mockSocket = mock<WrappedSocket>()
+      const service = new ShoppingListSocketService(mockSocket)
+
+      service.close()
+
+      expect(mockSocket.disconnect).toHaveBeenCalled()
     })
   })
 })

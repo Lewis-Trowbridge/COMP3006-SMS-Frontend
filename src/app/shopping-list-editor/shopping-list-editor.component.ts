@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { IShoppingListItem, ShoppingListSocketService } from '../shopping-list-socket.service'
 import { FormArray, FormControl, FormGroup } from '@angular/forms'
@@ -21,7 +21,7 @@ interface IShoppingListItemFormGroup {
   templateUrl: './shopping-list-editor.component.html',
   styleUrls: ['./shopping-list-editor.component.css']
 })
-export class ShoppingListEditorComponent implements OnInit {
+export class ShoppingListEditorComponent implements OnInit, OnDestroy {
   formGroup = new FormGroup({
     items: new FormArray([
       this.constructFormGroup()
@@ -96,5 +96,9 @@ export class ShoppingListEditorComponent implements OnInit {
     for (const item of changes) {
       this.items.push(this.constructFormGroup(item._id, item.text, item.quantity), { emitEvent: false })
     }
+  }
+
+  ngOnDestroy (): void {
+    this.shoppingListSocketService.close()
   }
 }

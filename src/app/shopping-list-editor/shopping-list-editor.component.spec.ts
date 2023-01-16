@@ -433,4 +433,32 @@ describe('ShoppingListEditorComponent', () => {
     await waitFor(() => expect(savingElement).not.toBeInTheDocument())
     expect(await findByText('Saved.')).toBeInTheDocument()
   })
+
+  it('calls the close method on destroy', async () => {
+    const expectedListId = 'list'
+    const moduleMetadata = MockBuilder(ShoppingListEditorComponent, AppModule)
+      .keep(ReactiveFormsModule)
+      .keep(MatListModule)
+      .keep(MatInputModule)
+      .keep(MatIconModule)
+      .keep(MatButtonModule)
+      .keep(MatAutocompleteModule)
+      .provide({
+        provide: ActivatedRoute,
+        useValue: { paramMap: of(convertToParamMap({ listId: expectedListId })) }
+      })
+      .build()
+
+    const mockClose = jest.fn()
+    MockInstance(ShoppingListRESTService, 'get', jest.fn().mockReturnValue(new Observable()))
+    MockInstance(ItemServiceService, 'findByName', () => of<string[]>([]))
+    MockInstance(ShoppingListSocketService, 'registerChangeObservers', jest.fn().mockReturnValue({ fakeObservers }))
+    MockInstance(ShoppingListSocketService, 'close', mockClose)
+
+    const { fixture } = await render(ShoppingListEditorComponent, moduleMetadata)
+
+    fixture.destroy()
+
+    await waitFor(() => expect(mockClose).toHaveBeenCalled())
+  })
 })
