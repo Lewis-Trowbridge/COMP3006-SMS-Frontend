@@ -29,11 +29,16 @@ export class ShoppingListSocketService {
   constructor (private readonly socket: Socket) { }
 
   registerChangeObservers (listId: string, changes: Observable<IShoppingListItem[]>): IChangeObservers {
+    this.socket.connect()
     this.socket.emit('joinListRoom', listId)
     changes.subscribe(change => this.socket.emit('resolveChanges', listId, change))
     return {
       acknowledge: this.socket.fromEvent<null>('acknowledge'),
       distributeCanonical: this.socket.fromEvent<IShoppingListItem[]>('distributeCanonical')
     }
+  }
+
+  close (): void {
+    this.socket.disconnect()
   }
 }
