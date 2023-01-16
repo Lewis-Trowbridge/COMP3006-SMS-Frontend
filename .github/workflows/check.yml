@@ -13,9 +13,9 @@ jobs:
         with:
           node-version: 16
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
       - name: Test
-        run: yarn test
+        run: npm run test
 
   lint:
     runs-on: ubuntu-latest
@@ -27,9 +27,9 @@ jobs:
         with:
           node-version: 16
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
       - name: Lint
-        run: yarn lint
+        run: npm run lint
 
   lighthouse:
     runs-on: ubuntu-latest
@@ -41,9 +41,9 @@ jobs:
         with:
           node-version: 16
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
       - name: Build for testing
-        run: yarn build:lighthouse
+        run: npm run build:lighthouse
       - name: Run lighthouse
         uses: treosh/lighthouse-ci-action@v9
         with:
