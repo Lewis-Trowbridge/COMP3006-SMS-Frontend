@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ShoppingListRESTService } from '../shopping-list-rest.service'
 import { IShoppingList } from '../shopping-list-socket.service'
